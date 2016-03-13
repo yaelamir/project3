@@ -3,7 +3,6 @@ var mongoose = require('mongoose'),
     debug    = require('debug')('app:models');
 
 
-
 var vurserSchema = new mongoose.Schema({
   name:   String,
   soundcloud_id: String
