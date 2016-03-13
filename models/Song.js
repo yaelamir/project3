@@ -7,8 +7,8 @@ var upvoteSchema = new mongoose.Schema({
   song: {type: mongoose.Schema.Types.ObjectId,
          ref: "Song"},
   upvotes: Number,
-  upvotee: {type: mongoose.Schema.Types.ObjectId,
-            ref: "Vurser"}
+  upvotee: [{type: mongoose.Schema.Types.ObjectId,
+            ref: "Vurser"}]
 })
 
 
