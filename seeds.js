@@ -65,7 +65,7 @@ Vurser.remove({}, function(err) {
       upvoteperson1 = vurser[0];
       upvoteperson2 = vurser[1];
       // console.log(upvoteperson);
-      thesong.upvotes_for.push({song: upvotedsong, upvotes: 1, upvotee: upvoteperson1});
+      thesong.upvotes_for.push({song: upvotedsong, upvotee: upvoteperson1});
       // console.log(thesong);
       thesong.save(function(err) {
         // console.log(err);
@@ -74,13 +74,14 @@ Vurser.remove({}, function(err) {
         // console.log(vurser);
       }),
       console.log(thesong.upvotes_for[0].upvotes)
-      console.log(thesong.upvotes_for[0].upvotes ++)
-      console.log(thesong.upvotes_for[0].upvotes)
-      console.log(thesong.upvotes_for[0])
+      console.log(thesong.upvotes_for.length)
       console.log(thesong.upvotes_for[0].upvotee)
-      // console.log("upvoteperson2: ", upvoteperson2)
-      // thesong.upvotes_for[0].upvotee.push(upvoteperson2)
-      // console.log(thesong.upvotes_for[0])
+      console.log("upvoteperson2: ", upvoteperson2)
+      thesong.upvotes_for[0].upvotee.push(upvoteperson2)
+      thesong.upvotes_for[0].upvotes = thesong.upvotes_for[0].upvotee.length;
+      console.log(thesong.upvotes_for[0])
+      console.log(thesong.upvotes_for[0].upvotes)
+      console.log(thesong.upvotes_for[0].upvotee)
     });
   });
 })
