@@ -3,6 +3,8 @@ var path         = require('path');
 var favicon      = require('serve-favicon');
 var logger       = require('morgan');
 var bodyParser   = require('body-parser');
+var session      = require('express-session');
+var passport     = require('passport');
 var debug        = require('debug')('app:http');
 var cookieParser = require('cookie-parser');
 
@@ -10,6 +12,12 @@ var cookieParser = require('cookie-parser');
 var env      = require('./config/environment'),
     mongoose = require('./config/database'),
     routes   = require('./config/routes');
+
+// load the env vars
+require('dotenv').load();
+
+//load passport *c*
+require('./config/passport');
 
 // Instantiate a server application.
 var app = express();
@@ -32,6 +40,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(cookieParser('notsosecretnowareyou'));
+
+// Mounting Session Middleware *c*
+app.use(session({
+  secret: 'Vursers Rule!',
+  resave: false,
+  saveUninitialized: true
+}));
+
+// Mounting Pasport *c*
+app.use(passport.initialize());
+app.use(passport.session()); // Can be removed if we don't need persisted logins
+
 
 // Routing layers: favicon, static assets, dynamic routes, or 404…
 

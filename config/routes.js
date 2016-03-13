@@ -3,13 +3,13 @@ var express = require('express'),
 
 // Require controllers.
 var welcomeController = require('../controllers/welcome');
-var usersController   = require('../controllers/users');
+var vursersController   = require('../controllers/vursers');
 
 // root path:
 router.get('/', welcomeController.index);
 
 // users resource paths:
-router.get('/users',     usersController.index);
-router.get('/users/:id', usersController.show);
+router.get('/users',     vursersController.index);
+router.get('/users/:id', vursersController.show);
 
 module.exports = router;
