@@ -10,6 +10,15 @@
     <ul>
       <li><a href="/users">Visit the user list.</a></li>
     </ul>
+    <p>HELLO</p>
+    <ul class="right">
+      <% if (user) { %>
+      <li><a href="/auth/logout">Logout</a></li>
+      <li><%= user.name %></li>
+      <% } else { %>
+      <li><a href="/auth/soundcloud">Login with Soundcloud</a></li>
+      <% } %>
+    </ul>
   </main>
 
   <%- include('../partials/scripts') %>

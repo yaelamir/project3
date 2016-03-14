@@ -5,7 +5,7 @@ var Vurser = require("../models/Vurser");
 var index = function(req, res, next){
 
   Vurser.find({}, function(error, Vursers){
-    res.render('Vursers/index', {Vursers: Vursers});
+    res.render('users/index', {Vursers: Vursers});
   });
 };
 
