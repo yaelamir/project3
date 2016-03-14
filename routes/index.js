@@ -6,15 +6,14 @@ var express = require('express'),
 //*******//
 
 // Require controllers.
-var welcomeController = require('../controllers/welcome');
-var vursersController   = require('../controllers/vursers');
+var mainController      = require('../controllers/main'),
+    vursersController   = require('../controllers/vursers');
 
 
 // root path:
-indexrouter.get('/', welcomeController.index);
+indexrouter.get('/', mainController.index);
 
 // users resource paths:
-indexrouter.get('/users',     vursersController.index);
 indexrouter.get('/users/:id', vursersController.show);
 
 
