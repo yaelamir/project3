@@ -3,16 +3,14 @@
 <head>
   <%- include('../partials/head') %>
     <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
-
+    <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
 </head>
 <body>
   <%- include('../partials/header', {subHeading: 'Welcome'}) %>
 
   <main>
-    <ul>
-      <li><a href="/users">Visit the user list.</a></li>
-    </ul>
-    <p>HELLO</p>
     <ul class="right">
       <% if (user) { %>
       <li><a href="/auth/logout">Logout</a></li>
@@ -20,6 +18,12 @@
       <% } else { %>
       <li><a href="/auth/soundcloud">Login with Soundcloud</a></li>
       <% } %>
+    </ul>
+    <form id="search-box">
+      <input type="text" id="search" name="song[query]" placeholder="Search">
+      <input type="submit" value="Search">
+    </form>
+    <ul id="searchResults">
     </ul>
   </main>
 
