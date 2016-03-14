@@ -15,7 +15,6 @@ var upvoteSchema = new mongoose.Schema({
 var songSchema = new mongoose.Schema({
   title: String,
   artist: String,
-  album: String,
   length: Number,
   track_id: String,
   recommendations: [upvoteSchema],

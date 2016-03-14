@@ -14,7 +14,8 @@
     <ul class="right">
       <% if (user) { %>
       <li><a href="/auth/logout">Logout</a></li>
-      <li><%= user.name %></li>
+      <li><%= user.soundcloud_username %></li>
+      <li>playlists<%= user.playlists %></li>
       <% } else { %>
       <li><a href="/auth/soundcloud">Login with Soundcloud</a></li>
       <% } %>

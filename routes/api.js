@@ -15,6 +15,7 @@ apirouter.get('/soundcloud/callback',
   passport.authenticate('soundcloud',
     { failureRedirect: '/' }),
   function(req, res) {
+    console.log("heres your user: ", req.user)
     // Successful authentication, redirect home.
     res.redirect('/');
   });

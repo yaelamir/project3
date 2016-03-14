@@ -9,9 +9,9 @@ var debug        = require('debug')('app:http');
 var cookieParser = require('cookie-parser');
 
 // Load local libraries.
-var mongoose = require('./config/database'),
+var mongoose      = require('./config/database'),
     indexroutes   = require('./routes/index'),
-    apiroutes= require('./routes/api');
+    apiroutes     = require('./routes/api');
 
 // load the env vars
 require('dotenv').load();
