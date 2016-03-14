@@ -1,8 +1,8 @@
-var mongoose = require('./config/database');
+var mongoose = require('./database');
 
-var Vurser = require('./models/Vurser');
-var Song = require('./models/Song');
-var Playlist = require('./models/Playlist');
+var Vurser = require('../models/Vurser');
+var Song = require('../models/Song');
+var Playlist = require('../models/Playlist');
 
 var Vursers = [
   { // 0
