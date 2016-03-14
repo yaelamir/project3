@@ -3,25 +3,44 @@
 // }
 
 SC.initialize({
-  client_id: 'f4ddb16cc5099de27575f7bcb846636c'
+  client_id: 'f4ddb16cc5099de27575f7bcb846636c',
+  redirect_uri: "http://localhost:3000/auth/soundcloud/callback"
 });
 
+// var renderLi;
 //displays tracks with titles
 //As a user, I would like to be able to search for songs
-SC.get('/tracks', {
-  // user: {username: "johnlegend"}
+function getTracks() {
+  SC.get('/tracks', {
   q: $('input#search').val()
-})
-.then(function(tracks) {
-  tracks.forEach(function(q) {
-    // console.log(q.title);
-    // console.log("title: ", q.title, "artist: ", q.user.username);
-    // $(ul#searchResults).append(q.title, q.user.username);
-    return q
+  }, function(tracks) {
+    tracks.forEach(function(track) {
+      showTracks(track);
+    });
   })
-  $searchResults.append($renderResults);
+}
+
+$(document).ready(function() {
+  //SC.get('/tracks', { genres: 'foo' }, function(tracks) {
+  //  $(tracks).each(function(index, track) {
+  //    $('#results').append($('<li></li>').html(track.title + ' - ' + track.genre));
+  //  });
+  //});
 });
 
+function showTracks(track) {
+  var $trackItem = $(renderLi(track));
+  $('ul#searchResults').append($trackItem);
+  console.log($trackItem)
+}
+
+$(function() {
+  renderLi = _.template(`
+    <li><%= title %></li>
+  `)
+
+  $('form#search-box').on('submit', getTracks);
+})
 
 // displays users name
 // AAU I'd like to be able to search for an artist so that I can see the song that they've uploaded
