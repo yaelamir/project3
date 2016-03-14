@@ -1,10 +1,10 @@
 var mongoose = require('mongoose'),
     debug    = require('debug')('app:models');
 
-
 var playlistSchema = new mongoose.Schema({
   title: String,
-  songs: [songSchema],
+  songs: [{type: mongoose.Schema.Types.ObjectId,
+           ref: "Song"}]
   vurser: {type: mongoose.Schema.Types.ObjectId,
            ref: "Vurser"}
 });

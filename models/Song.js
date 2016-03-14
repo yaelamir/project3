@@ -18,10 +18,7 @@ var songSchema = new mongoose.Schema({
   album: String,
   length: Number,
   track_id: String,
-  upvotes_for: [upvoteSchema],
-  upvoted_to: [upvoteSchema],
-  playlists: {type: mongoose.Schema.Types.ObjectId,
-             ref: "Playlist"}
+  recommendations: [upvoteSchema],
 });
 
 var Song = mongoose.model('Song', songSchema);
