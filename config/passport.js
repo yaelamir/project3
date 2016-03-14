@@ -9,12 +9,17 @@ passport.use(new SoundCloudStrategy({
     callbackURL: process.env.SOUNDCLOUD_CALLBACK
   },
   function(accessToken, refreshToken, profile, cb) {
-    Vurser.findOne({ 'soundcloud_id': profile.id }, function(err, vurser) {
+    // console.log(profile);
+    Vurser.findOne({ soundcloud_id: profile.id }, function(err, vurser) {
       if (err) return cb(err);
+      console.log(process.env.SOUNDCLOUD_CALLBACK)
+      console.log(vurser)
       if (vurser) {
+        console.log("already exists... or does it...??")
         return cb(null, vurser);
       } else {
         // Creating a new vurser via OAuth
+        console.log("creating a new vurser!")
         var newVurser = new Vurser({
           name: profile.name,
           soundcloud_id: profile.id

@@ -1,4 +1,3 @@
-
 var mongoose = require('mongoose'),
     debug    = require('debug')('app:models');
 
