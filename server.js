@@ -9,8 +9,7 @@ var debug        = require('debug')('app:http');
 var cookieParser = require('cookie-parser');
 
 // Load local libraries.
-var env      = require('./config/environment'),
-    mongoose = require('./config/database'),
+var mongoose = require('./config/database'),
     indexroutes   = require('./routes/index'),
     apiroutes= require('./routes/api');
 
@@ -24,8 +23,8 @@ require('./config/passport');
 var app = express();
 
 // Configure the application (and set it's title!).
-app.set('title', env.TITLE);
-app.set('safe-title', env.SAFE_TITLE);
+app.set('title', process.env.TITLE);
+app.set('safe-title', process.env.SAFE_TITLE);
 // EJS view engine config
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

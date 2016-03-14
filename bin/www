@@ -3,7 +3,6 @@
 var http  = require('http'),
     debug = require('debug')('app:http');
 
-var env = require('../config/environment'),
     app = require('../server');
 
 // Get port from environment and store.
