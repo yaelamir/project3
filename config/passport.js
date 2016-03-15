@@ -28,9 +28,9 @@ passport.use(new SoundCloudStrategy({
           function(err, res, body) {
             playlistInfo = JSON.parse(body);
             // For each playlist in Vurser's soundcloud playlist,
-            playlistInfo.forEach(function(playlist){
+            playlistInfo.forEach(function(playlist, playlistindex){
               //For each song in a playlist
-              playlist.tracks.forEach(function(song, index) {
+              playlist.tracks.forEach(function(song, songindex) {
                 //Create song in the DB
                 Song.create(
                   {
@@ -43,25 +43,28 @@ passport.use(new SoundCloudStrategy({
                     //Push this song into the songsArray
                     songsArray.push(song);
                     //If current number of songs matches number of songs in playlist,
-                    if (index === playlist.tracks.length -1) {
+                    if (songindex === playlist.tracks.length - 1) {
                       //Push finished array of songs into created playlist Array
                       playlistArray.push({
                         title: playlist.permalink,
                         songs: songsArray
                       });
-                      //Finally, create new Vurser with their soundcloud playlist
-                      var newVurser = new Vurser({
-                        name: profile.full_name,
-                        soundcloud_id: profile._json.id,
-                        soundcloud_username: profile._json.username,
-                        playlists: playlistArray
-                      });
-                      //Save and redirect
-                      newVurser.save(function(err) {
-                        if (err) return cb(err);
-                        return cb(null, newVurser);
-                      });
 
+                      songsArray = [];
+                      //Finally, create new Vurser with their soundcloud playlist
+                      if (playlistindex === playlistInfo.length - 1) {
+                        var newVurser = new Vurser({
+                          name: profile.full_name,
+                          soundcloud_id: profile._json.id,
+                          soundcloud_username: profile._json.username,
+                          playlists: playlistArray
+                        });
+                        //Save and redirect
+                        newVurser.save(function(err) {
+                          if (err) return cb(err);
+                          return cb(null, newVurser);
+                        });
+                      }
                     }
                   });
               })
