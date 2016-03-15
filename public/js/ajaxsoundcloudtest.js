@@ -22,21 +22,22 @@ function showTracks(evt) {
 
 function renderTracks(tracks) {
   var $trackItem = $(renderLi({tracks: tracks}));
-  $('span#line').remove();
+  $('span#line1').remove();
+  $('img#line3').remove();
+  $('a#line2').remove();
   $('section#searchResults').append($trackItem);
 }
 
+          // &nbsp&nbsp
 $(function() {
   renderLi = _.template(`
     <% tracks.forEach(function(track) { %>
-      <span id="line">
-        <a id="line" href="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
-          <img class="pic" id="line" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
-          &nbsp&nbsp
+      <span id="line1">
+        <a id="line2" href="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
+          <img class="pic" id="line3" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
           <%= track.title %>
         </a>
       </span>
-      <br>
     <% }); %>
   `)
   $('form#searchbox').on('submit', showTracks);
