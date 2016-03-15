@@ -7,7 +7,8 @@ var express = require('express'),
 
 // Require controllers.
 var mainController      = require('../controllers/main'),
-    vursersController   = require('../controllers/vursers');
+    vursersController   = require('../controllers/vursers'),
+    songsController     = require('../controllers/songs');
 
 
 // root path:
@@ -15,6 +16,9 @@ indexrouter.get('/', mainController.index);
 
 // users resource paths:
 indexrouter.get('/users/:id', vursersController.show);
+
+// songs path:
+indexrouter.get('/songs/:id', songsController.show);
 
 
 module.exports = indexrouter;
