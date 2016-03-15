@@ -22,26 +22,26 @@ function showTracks(evt) {
 
 function renderTracks(tracks) {
   var $trackItem = $(renderLi({tracks: tracks}));
-  $('span.line1').remove();
-  $('img.line3').remove();
-  $('a.line2').remove();
+  $('span.song-total').remove();
+  $('img.song-image').remove();
+  // $('a.line2').remove();
   $('section#searchResults').append($trackItem);
 }
 
           // &nbsp&nbsp
-$(function() {
-  renderLi = _.template(`
-    <% tracks.forEach(function(track) { %>
-      <span class="line1">
-        <a class="line2" href="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
-          <img class="pic line3" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
-          <%= track.title %>
-        </a>
-      </span>
-    <% }); %>
-  `)
-  $('form#searchbox').on('submit', showTracks);
-})
+// $(function() {
+//   renderLi = _.template(`
+//     <% tracks.forEach(function(track) { %>
+//       <span class="line1">
+//         <a class="line2" href="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
+//           <img class="pic line3" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
+//           <%= track.title %>
+//         </a>
+//       </span>
+//     <% }); %>
+//   `)
+//   $('form#searchbox').on('submit', showTracks);
+// })
 
 $(function() {
   renderLi = _.template(`
@@ -55,6 +55,7 @@ $(function() {
     <% }); %>
   `)
   $('form#searchbox').on('submit', showTracks);
+  $('#searchResults').on('click', 'button', playSongs);
 })
 
 
@@ -70,7 +71,7 @@ $(function() {
 function playSongs() {
     var $audio = $('#audio-player');
     var playUri = $(this).parent().attr('title');
-    console.log(playUri)
+    console.log(playUri);
     // SC.get("/tracks/" + sourceUrl + "/stream", {}, function(sound){
     //   allow_redirects=False;
     //   alert("Sound URI: " + sound.uri);
@@ -86,7 +87,6 @@ function playSongs() {
     /****************/
 }
 
-$('#searchResults').on('click', 'button', playSongs);
 
 
 
