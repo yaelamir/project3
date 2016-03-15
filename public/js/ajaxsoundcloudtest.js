@@ -42,3 +42,44 @@ $(function() {
   `)
   $('form#searchbox').on('submit', showTracks);
 })
+
+$(function() {
+  renderLi = _.template(`
+    <% tracks.forEach(function(track) { %>
+      <span id="song-total">
+        <button id="song-stream" class="<%= track.id %>">Play</button>
+          <img class="pic" id="song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
+          &nbsp&nbsp
+          <%= track.title %>
+      </span>
+    <% }); %>
+  `)
+  $('form#searchbox').on('submit', showTracks);
+})
+
+
+// SC.stream('/tracks/293').then(function(player){
+//   player.play();
+// });
+
+// SC.stream("/tracks/293", function(sound){
+//     $("audio-player").attr("src", sound.uri);
+// });
+
+
+function playSongs(sourceUrl) {
+    var $audio = $('#audio-player');
+    console.log(sourceUrl);
+    SC.get("/tracks/" + sourceUrl + "/stream", {}, function(sound){
+      allow_redirects=False;
+      alert("Sound URI: " + sound.uri);
+      console.log(sound)
+
+      $("#audio-player").attr("src", sound.uri);
+    });
+    /****************/
+    // audio[0].pause();
+    // audio[0].load();//suspends and restores all audio element
+    $audio[0].play(); //changed based on Sprachprofi's comment below
+    /****************/
+}
