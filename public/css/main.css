@@ -22,3 +22,7 @@ a { color: #00B7FF; }
   height: 200px;
   border: 1px solid black;
 }
+
+.song-total {
+  display: block;
+}

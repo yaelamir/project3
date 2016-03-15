@@ -22,9 +22,9 @@ function showTracks(evt) {
 
 function renderTracks(tracks) {
   var $trackItem = $(renderLi({tracks: tracks}));
-  $('span#line1').remove();
-  $('img#line3').remove();
-  $('a#line2').remove();
+  $('span.line1').remove();
+  $('img.line3').remove();
+  $('a.line2').remove();
   $('section#searchResults').append($trackItem);
 }
 
@@ -32,9 +32,9 @@ function renderTracks(tracks) {
 $(function() {
   renderLi = _.template(`
     <% tracks.forEach(function(track) { %>
-      <span id="line1">
-        <a id="line2" href="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
-          <img class="pic" id="line3" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
+      <span class="line1">
+        <a class="line2" href="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
+          <img class="pic line3" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
           <%= track.title %>
         </a>
       </span>
@@ -46,9 +46,9 @@ $(function() {
 $(function() {
   renderLi = _.template(`
     <% tracks.forEach(function(track) { %>
-      <span id="song-total">
-        <button id="song-stream" class="<%= track.id %>">Play</button>
-          <img class="pic" id="song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
+      <span class="song-total" title="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
+        <button class="song-stream <%= track.id %>">Play</button>
+          <img class="pic song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
           &nbsp&nbsp
           <%= track.title %>
       </span>
@@ -67,19 +67,27 @@ $(function() {
 // });
 
 
-function playSongs(sourceUrl) {
+function playSongs() {
     var $audio = $('#audio-player');
-    console.log(sourceUrl);
-    SC.get("/tracks/" + sourceUrl + "/stream", {}, function(sound){
-      allow_redirects=False;
-      alert("Sound URI: " + sound.uri);
-      console.log(sound)
+    var playUri = $(this).parent().attr('title');
+    console.log(playUri)
+    // SC.get("/tracks/" + sourceUrl + "/stream", {}, function(sound){
+    //   allow_redirects=False;
+    //   alert("Sound URI: " + sound.uri);
+    //   console.log(sound)
 
-      $("#audio-player").attr("src", sound.uri);
-    });
+    $audio.prepend(`<source src="${playUri}" type="audio/mpeg" />`);
+    // });
+
     /****************/
     // audio[0].pause();
     // audio[0].load();//suspends and restores all audio element
     $audio[0].play(); //changed based on Sprachprofi's comment below
     /****************/
 }
+
+$('#searchResults').on('click', 'button', playSongs);
+
+
+
+
