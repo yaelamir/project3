@@ -11,20 +11,32 @@
   <%- include('../partials/header', {subHeading: 'Welcome '}) %>
 
   <main>
-    <ul class="right">
-      <% if (user) { %>
-      <li><a href="/auth/logout">Logout</a></li>
-      <li><%= user.soundcloud_username %></li>
-      <li>playlists<%= user.playlists %></li>
-      <% } else { %>
-      <li><a href="/auth/soundcloud">Login with Soundcloud</a></li>
-      <% } %>
-    </ul>
+
     <form id="searchbox">
       <input type="text" id="search" placeholder="Search">
       <input type="submit" value="Search">
     </form>
     <section id="searchResults">
+    </section>
+
+    <br>
+
+    <section class="right">
+      <% if (user) { %>
+        <div>
+          <%= user.soundcloud_username %>
+          &nbsp;&nbsp;
+          <a href="/auth/logout">Logout</a>
+        </div>
+        <div class="plbar">
+            <% user.playlists.forEach(function(pl) { %>
+              <h3><%= pl.title %></h3>
+              <p><%= pl.songs %></p>
+            <% }); %>
+        </div>
+      <% } else { %>
+        <div><a href="/auth/soundcloud">Login with Soundcloud</a></div>
+      <% } %>
     </section>
   </main>
   <%- include('../partials/scripts') %>

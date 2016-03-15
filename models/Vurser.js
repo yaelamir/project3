@@ -18,4 +18,3 @@ var vurserSchema = new mongoose.Schema({
 var Vurser = mongoose.model('Vurser', vurserSchema);
 
 module.exports = Vurser;
-

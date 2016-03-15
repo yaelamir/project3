@@ -10,7 +10,6 @@ function getTracks(query) {
   return SC.get('/tracks', { q: query });
 }
 
-
 function showTracks(evt) {
   evt.preventDefault();
   getTracks($search.val())
@@ -43,19 +42,20 @@ $(function() {
   $('form#searchbox').on('submit', showTracks);
 })
 
-$(function() {
-  renderLi = _.template(`
-    <% tracks.forEach(function(track) { %>
-      <span id="song-total">
-        <button id="song-stream" class="<%= track.id %>">Play</button>
-          <img class="pic" id="song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
-          &nbsp&nbsp
-          <%= track.title %>
-      </span>
-    <% }); %>
-  `)
-  $('form#searchbox').on('submit', showTracks);
-})
+// $(function() {
+//   renderLi = _.template(`
+//     <% tracks.forEach(function(track) { %>
+//       <span id="song-total">
+//         <button id="song-stream" class="<%= track.id %>">Play</button>
+//           <img class="pic" id="song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
+//           &nbsp&nbsp
+//           <%= track.title %>
+//       </span>
+//       <br>
+//     <% }); %>
+//   `)
+//   $('form#searchbox').on('submit', showTracks);
+// })
 
 
 // SC.stream('/tracks/293').then(function(player){
