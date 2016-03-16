@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <%- include('partials/head') %>
 </head>
 <body>
-  <%- include('partials/header', {subHeading: 'Error'}) %>
 
   <main>
     <h3><%= message %></h3>
@@ -12,6 +10,5 @@
     <pre><%= error.stack %></pre>
   </main>
 
-  <%- include('partials/scripts') %>
 </body>
 </html>
