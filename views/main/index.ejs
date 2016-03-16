@@ -24,21 +24,13 @@
 <body>
 
 <header>
-  <section class="left">
+  <section class="col m1">
     <% if (user) { %>
       <div>
         <%= user.soundcloud_username %>
         <p hidden id="userid"><%= user._id %></p>
         &nbsp;&nbsp;
         <a href="/auth/logout">Logout</a>
-      </div>
-      <div class="plbar">
-          <% user.playlists.forEach(function(pl) { %>
-            <strong><p><%= pl.title %></p></strong>
-            <% pl.songs.forEach(function(s) { %>
-              <p><%= s %></p>
-            <% }); %>
-          <% }); %>
       </div>
     <% } else { %>
       <div><a href="/auth/soundcloud">Login with Soundcloud</a></div>
@@ -47,13 +39,25 @@
 
   <form id="search-form">
     <input type="text" id="search-value" placeholder="Search">
-    <!-- <input type="submit" value="Search"> -->
   </form>
 </header>
 
 <main>
-  <section class="playlists"></section>
-  <section class="nothing row"></section>
+  <div class="col m1">
+    <% if (user) { %>
+      <div id="playboard">Playlists:
+        <ul class="plbar collapsible" data-collapsible="expandable" id="pl">
+        </ul>
+      </div>
+    <% } %>
+  </div>
+
+  <section>
+    <div class="col m3">
+      <section id="search-results"></section>
+    </div>
+  </section>
+
   <section id="dashboard" class="dashboard row">
     <div class="col m4">
       <section id="search-results"></section>
@@ -65,7 +69,8 @@
   <audio id="audio-player" controls="controls"></audio>
 </footer>
 
-<script src='/js/main.js'></script>
+<!-- <script src='/js/main.js'></script>
+ --><script src='/js/playlist.js'></script>
 <!-- <script src='/js/ajaxsoundcloudtest.js'></script> -->
 </body>
 </html>
