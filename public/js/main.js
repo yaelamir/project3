@@ -1,5 +1,7 @@
 console.log('JS loaded!');
 
+const URL_PREFIX = "https://localhost:3000";
+
 var renderTrack,
     renderRecs,
     $searchValue,
@@ -19,9 +21,9 @@ $(function() {
     <% tracks.forEach(function(track) { %>
       <span class="song-total" data-track-src="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
         <% if (action === "play") { %>
-        <button data-track-id="<%= track.id %>" class="song-stream">Play</button>
+        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" class="song-stream">Play</button>
         <% } else { %>
-        <button data-track-id="<%= track.id %>" class="song-stream">+</button>
+        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" class="song-stream">+</button>
         <% } %>
           <img class="pic song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
           &nbsp&nbsp
@@ -73,9 +75,43 @@ function fetchRecommendations(trackId) {
   return new Promise(function(resolve) { resolve([]); })
 }
 
-function createRecommendation(currentTrackId, recommendationTrackId) {
+function createRecommendation(recommendationTrackId) {
+  recommendationTrackId = recommendationTrackId.target.dataset
+  var currentTrackId,
+      currentTrackTitle,
+      currentTrackArtist,
+      currentTrackDuration;
+  var audioSrc = document.getElementById('audio-player').children[0].src.split('/')
+  audioSrc.forEach(function(str){
+    if(/^\d+$/.test(str)){
+      currentTrackId = str;
+    }
+  })
+  var currentTrackInfo = $("button[data-track-id=" + currentTrackId + "]");
+  var currentTrackDataset = currentTrackInfo[0].dataset;
   // TODO: implement!
-  console.log("IMPLEMENT ME", currentTrackId, recommendationTrackId);
+  console.log("IMPLEMENT ME", recommendationTrackId, "\nCURR: ", currentTrackInfo);
+  var data = {
+      currentTrack: currentTrackId,
+      currentTitle: currentTrackDataset.title,
+      currentArtist: currentTrackDataset.artist,
+      currentDuration: currentTrackDataset.duration,
+      recTrackId: recommendationTrackId.trackId,
+      recTrackTitle: recommendationTrackId.title,
+      recTrackArtist: recommendationTrackId.artist,
+      recTrackDuration: recommendationTrackId.duration,
+      user: $('#userid').text()
+    }
+  $.ajax({
+    type: 'POST',
+    url: '/api/addrecs',
+    data: data
+  }).then(function(result){
+    console.log(result)
+  }).fail(function(error){
+    console.log(error)
+  })
+
 }
 
 /*
@@ -165,6 +201,7 @@ function playSong() {
   $audio.prepend(`<source src="${playUri}" type="audio/mpeg" />`);
 
   $audio[0].pause();
+  //IF .load fails, should NOT go on to .play --fix
   $audio[0].load(); // suspends and restores all audio element
   $audio[0].play();
 }

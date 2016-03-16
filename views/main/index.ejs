@@ -28,6 +28,7 @@
     <% if (user) { %>
       <div>
         <%= user.soundcloud_username %>
+        <p hidden id="userid"><%= user._id %></p>
         &nbsp;&nbsp;
         <a href="/auth/logout">Logout</a>
       </div>
