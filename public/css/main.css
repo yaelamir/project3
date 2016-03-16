@@ -2,27 +2,61 @@
 html,
 body {
   box-sizing: border-box;
-  font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 body {
   font-size: 14px;
-  padding: 50px;
+  background: url("http://wallpaperstock.net/outer-space-geometry-wallpapers_36810_1920x1080.jpg");
+  background-size: cover;
+  /*background-color: #1d2120;*/
+  font-family: 'Raleway', sans-serif;
+  color: white;
+  overflow: hidden;
+  /*padding: 50px;*/
 }
 
-a { color: #00B7FF; }
+.top-nav {
+  background-color: rgba(0,0,0,0)
+}
+
+a {
+  color: rgba(51, 51, 51, 0.8);
+  text-align: center;
+}
+
+/*recommendations div*/
+.collection {
+  border: none;
+  font-weight: 200;
+}
+
+@keyframes selectedrecommendation {
+   0%   {border-bottom: 1px solid red;}
+    25%  {border-top: 1px solid red;}
+    50%  {border-left: 1px solid red;}
+    75%  {border-right: 1px solid red;}
+}
+.collection:hover {
+  animation-name: selectedrecommendation;
+  animation-duration: 4s;
+}
+
+
+.collection .collection-item {
+  border: none;
+  border-bottom: 1px solid #f04a4a
+  font-weight: 200;
+}
 
 
 #line1 {
   display: block;
 }
 
-#player {
-  max-width: 200px
-  height: 200px;
-  border: 1px solid black;
-}
-
-.song-total {
-  display: block;
+/*AUDIO PLAYER INFO*/
+audio {
+  width: 100%;
+  position: absolute;
+  bottom:0;
+    font-family: 'Raleway', sans-serif;
 }
