@@ -18,7 +18,11 @@ $(function() {
   renderTrack = _.template(`
     <% tracks.forEach(function(track) { %>
       <span class="song-total" data-track-src="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
+        <% if (action === "play") { %>
         <button data-track-id="<%= track.id %>" class="song-stream">Play</button>
+        <% } else { %>
+        <button data-track-id="<%= track.id %>" class="song-stream">+</button>
+        <% } %>
           <img class="pic song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
           &nbsp&nbsp
           <%= track.title %>
@@ -69,6 +73,11 @@ function fetchRecommendations(trackId) {
   return new Promise(function(resolve) { resolve([]); })
 }
 
+function createRecommendation(currentTrackId, recommendationTrackId) {
+  // TODO: implement!
+  console.log("IMPLEMENT ME", currentTrackId, recommendationTrackId);
+}
+
 /*
  * RENDER FUNCTIONS ====================================================
  */
@@ -96,7 +105,7 @@ function showRecommendations(evt) {
 
 function renderTracks(tracks) {
   // Render the HTML.
-  var $trackItem = $(renderTrack({tracks: tracks}));
+  var $trackItem = $(renderTrack({tracks: tracks, action: "play"}));
 
   // Add listeners to the effected HTML.
   $trackItem.on('click', 'button', playSong);
@@ -104,6 +113,18 @@ function renderTracks(tracks) {
 
   // Clear search results and append new ones to page.
   $searchResults.empty().append($trackItem);
+}
+
+function renderPossibleRecs($insertion, tracks) {
+  // Render the HTML.
+  var $trackItem = $(renderTrack({tracks: tracks, action: "add"}));
+
+  // Add listeners to the effected HTML.
+  // $trackItem.on('click', 'button', playSong);
+  $trackItem.on('click', 'button', createRecommendation);
+
+  // Clear search results and append new ones to page.
+  $insertion.empty().append($trackItem);
 }
 
 function renderRecommendations(recs) {
@@ -120,7 +141,10 @@ function renderRecommendations(recs) {
     $recsHTML.find('.search-rec-form, .found-recs').toggleClass('hidden');
   });
   $recsHTML.find('.search-rec-form').on("submit", function(evt) {
-    // getTracks($recsSearchVal).then()
+    getTracks($recsSearchVal.val()).then(function(tracks) {
+      console.log("Rec tracks:", tracks);
+      renderPossibleRecs($recsHTML.find(".found-recs"), tracks);
+    });
   });
 
   // Append recs to page.
