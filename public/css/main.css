@@ -26,3 +26,11 @@ a { color: #00B7FF; }
 .song-total {
   display: block;
 }
+
+.col {
+  border: 1px solid black;
+}
+
+.hidden {
+  display: none;
+}

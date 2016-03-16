@@ -45,7 +45,7 @@ function renderTracks(tracks) {
 $(function() {
   renderLi = _.template(`
     <% tracks.forEach(function(track) { %>
-      <span class="song-total" title="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
+      <span class="song-total" data-track-src="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
         <button class="song-stream <%= track.id %>">Play</button>
           <img class="pic song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
           &nbsp&nbsp
@@ -83,7 +83,7 @@ $(function() {
 
 function playSongs() {
     var $audio = $('#audio-player');
-    var playUri = $(this).parent().attr('title');
+    var playUri = $(this).parent().data('track-src');
     console.log(playUri);
     // SC.get("/tracks/" + sourceUrl + "/stream", {}, function(sound){
     //   allow_redirects=False;
@@ -94,8 +94,8 @@ function playSongs() {
     // });
 
     /****************/
-    // audio[0].pause();
-    // audio[0].load();//suspends and restores all audio element
+    $audio[0].pause();
+    $audio[0].load(); //suspends and restores all audio element
     $audio[0].play(); //changed based on Sprachprofi's comment below
     /****************/
 }

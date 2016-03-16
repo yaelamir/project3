@@ -1,45 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <%- include('../partials/head') %>
-    <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
-    <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+  <meta charset="utf-8">
+
+  <title><%= title %></title>
+  <meta name="description" content="A template app for building Express/Mongoose.">
+
+  <!-- Utility Libs (jQuery, Lodash) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+
+  <!-- Materialize -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+  <!-- Soundcloud SDK -->
+  <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
+
+
+  <link rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
 <body>
-  <%- include('../partials/header', {subHeading: 'Welcome '}) %>
 
-  <main>
-
-    <form id="searchbox">
-      <input type="text" id="search" placeholder="Search">
-      <input type="submit" value="Search">
-    </form>
-    <section id="searchResults">
-    </section>
-    <audio id="audio-player" controls="controls"></audio>
-
-    <br>
-
-    <section class="right">
-      <% if (user) { %>
-        <div>
-          <%= user.soundcloud_username %>
-          &nbsp;&nbsp;
-          <a href="/auth/logout">Logout</a>
-        </div>
-        <div class="plbar">
-            <% user.playlists.forEach(function(pl) { %>
-              <h3><%= pl.title %></h3>
-              <p><%= pl.songs %></p>
+<header>
+  <section class="left">
+    <% if (user) { %>
+      <div>
+        <%= user.soundcloud_username %>
+        &nbsp;&nbsp;
+        <a href="/auth/logout">Logout</a>
+      </div>
+      <div class="plbar">
+          <% user.playlists.forEach(function(pl) { %>
+            <strong><p><%= pl.title %></p></strong>
+            <% pl.songs.forEach(function(s) { %>
+              <p><%= s %></p>
             <% }); %>
-        </div>
-      <% } else { %>
-        <div><a href="/auth/soundcloud">Login with Soundcloud</a></div>
-      <% } %>
-    </section>
-  </main>
-  <%- include('../partials/scripts') %>
+          <% }); %>
+      </div>
+    <% } else { %>
+      <div><a href="/auth/soundcloud">Login with Soundcloud</a></div>
+    <% } %>
+  </section>
+
+  <form id="search-form">
+    <input type="text" id="search-value" placeholder="Search">
+    <!-- <input type="submit" value="Search"> -->
+  </form>
+</header>
+
+<main>
+  <section class="playlists"></section>
+  <section class="nothing row"></section>
+  <section id="dashboard" class="dashboard row">
+    <div class="col m4">
+      <section id="search-results"></section>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <audio id="audio-player" controls="controls"></audio>
+</footer>
+
+<script src='/js/main.js'></script>
+<!-- <script src='/js/ajaxsoundcloudtest.js'></script> -->
 </body>
 </html>
