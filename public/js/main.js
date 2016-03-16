@@ -141,6 +141,7 @@ function renderRecommendations(recs) {
     $recsHTML.find('.search-rec-form, .found-recs').toggleClass('hidden');
   });
   $recsHTML.find('.search-rec-form').on("submit", function(evt) {
+    evt.preventDefault();
     getTracks($recsSearchVal.val()).then(function(tracks) {
       console.log("Rec tracks:", tracks);
       renderPossibleRecs($recsHTML.find(".found-recs"), tracks);
