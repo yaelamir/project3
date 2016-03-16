@@ -23,7 +23,7 @@
 <body>
 
 <header>
-  <section class="right">
+  <section class="left">
     <% if (user) { %>
       <div>
         <%= user.soundcloud_username %>
@@ -32,8 +32,10 @@
       </div>
       <div class="plbar">
           <% user.playlists.forEach(function(pl) { %>
-            <h3><%= pl.title %></h3>
-            <p><%= pl.songs %></p>
+            <strong><p><%= pl.title %></p></strong>
+            <% pl.songs.forEach(function(s) { %>
+              <p><%= s %></p>
+            <% }); %>
           <% }); %>
       </div>
     <% } else { %>
@@ -41,8 +43,8 @@
     <% } %>
   </section>
 
-  <form id="searchbox">
-    <input type="text" id="search" placeholder="Search">
+  <form id="search-form">
+    <input type="text" id="search-value" placeholder="Search">
     <!-- <input type="submit" value="Search"> -->
   </form>
 </header>
@@ -50,11 +52,11 @@
 <main>
   <section class="playlists"></section>
   <section class="nothing row"></section>
-  <section class="dashboard row">
+  <section id="dashboard" class="dashboard row">
     <div class="col m4">
-      <section id="searchResults"></section>
+      <section id="search-results"></section>
     </div>
-  </div>
+  </section>
 </main>
 
 <footer>

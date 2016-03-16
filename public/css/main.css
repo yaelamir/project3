@@ -30,3 +30,7 @@ a { color: #00B7FF; }
 .col {
   border: 1px solid black;
 }
+
+.hidden {
+  display: none;
+}

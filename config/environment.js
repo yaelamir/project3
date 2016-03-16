@@ -1,8 +1,8 @@
 var _ = require('lodash');
 
 var localEnvVars = {
-  TITLE:      'project3',
-  SAFE_TITLE: 'project3'
+  TITLE:      'vurs',
+  SAFE_TITLE: 'vurs_app'
 };
 
 // Merge all environmental variables into one object.
