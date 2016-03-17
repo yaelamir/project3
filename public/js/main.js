@@ -6,6 +6,7 @@ var renderTrack,
     renderRecs,
     renderPlist,
     renderAddPLSong,
+    currentUser,
     $searchValue,
     $searchForm,
     $searchResults,
@@ -25,11 +26,18 @@ $(function() {
     <% tracks.forEach(function(track) { %>
       <div class="song-total" data-track-src="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
         <% if (action === "play") { %>
-        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" class="song-stream">Play</button>
+        <button data-track-id="<%= track.id %>" class="song-stream">Play</button>
+        <% } else if (action === "both") { %>
+        <button data-track-id="<%= track.id %>" class="song-stream">Play</button>
+        <button data-track-id="<%= track.id %>" class="song-stream">+</button>
         <% } else { %>
-        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" class="song-stream">+</button>
+        <button data-track-id="<%= track.id %>" class="song-stream">+</button>
         <% } %>
+        <% if (track.artwork_url) { %>
+          <img class="pic song-image" src="<%= track.artwork_url %>" style="max-width: 20px;">
+        <% } else { %>
           <img class="pic song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
+        <% } %>
           &nbsp&nbsp
           <%= track.title %>
       </div>
@@ -53,7 +61,8 @@ $(function() {
 
   // Add event handlers to page.
   $searchForm.on('submit', showTracks);
-
+  $('#playboard').on('click', '.play-playlist-song', playSong);
+  $('#playboard').on('click', '#add-new-pl', addNewPlist);
 
   loadPlaylists();
 });
@@ -134,25 +143,26 @@ function createRecommendation(recommendationTrackId) {
 renderPlist = _.template(`
   <% user.playlists.forEach(function(pl) { %>
     <li>
-      <div class="collapsible-header"><%= pl.title %></div>
-      <% pl.songs.forEach(function(s) { %>
-        <div data-track-src="<%= s.track_id %>" class="collapsible-body"><button class="play-playlist-song">&#9654;</button>
-          <%= s.artist %> - <%= s.title %>
-        </div>
-      <% }); %>
-      <div class="collapsible-body">
-        <button class="addasong">Add Song</button>
-      </div>
+      <div class="collapsible-header" style="color: black;""><%= pl.title %></div>
+      <% if (pl.songs.length > 0) { %>
+        <% pl.songs.forEach(function(s) { %>
+          <div class="collapsible-body" data-track-src="https://api.soundcloud.com/tracks/<%= s.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c">
+            <button data-track-id="<%= s.track_id %>" class="play-playlist-song">&#9654;</button>
+            <%= s.artist %> - <%= s.title %>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="collapsible-body">No Songs Added Yet!</div>
+      <% } %>
     </li>
   <% }); %>
   <div class="collapsible-header">
-    <button>Create New Playlist</button>
+    <button id="add-new-pl">Create New Playlist</button>
   </div>
 `)
 
 renderAddPLSong = _.template(`
-  <div class="col m2 astp">
-    <button class="add-plsong">Search</button>
+  <div class="astp">
     <form id="search-song" class="search-song-form hidden">
       <input type="text" id="search-add-value">
     </form>
@@ -161,33 +171,10 @@ renderAddPLSong = _.template(`
   </div>
 `)
 
-
 function renderPlists(user) {
-  var $plylst = $(renderPlist({user: user}));
-
-  $('#playboard').on('click', '.play-playlist-song', playSong);
-  $('#playboard').on('click', '.addasong', renderAddSearch);
+  $plylst = $(renderPlist({user: user}));
 
   $("#pl").empty().append($plylst);
-}
-
-function renderAddSearch(songs) {
-  var addSearch = renderAddPLSong({songs: songs});
-  var $addSearch = $(addSearch);
-
-  var $addSearchVal = $addSearch.find("#search-add-value");
-
-  $addSearch.find('.add-plsong').on("click", function() {
-    $addSearch.find('.search-song-form, .found-songs').toggleClass('hidden');
-  });
-  $addSearch.find('.search-song-form').on("submit", function(evt) {
-    evt.preventDefault();
-    getTracks($addSearchVal.val()).then(function(tracks) {
-      renderPossibleSongs($addSearch.find(".found-songs"), tracks);
-    });
-  });
-
-  $playboard.append($addSearch);
 }
 
 function loadPlaylists() {
@@ -196,14 +183,34 @@ function loadPlaylists() {
     url:    "/users/me"
   })
   .then(
-    function(currentUser) {
-      return currentUser;
+    function(curUser) {
+      currentUser = curUser;
+      console.log(curUser);
+      return curUser;
     },
     function(err) {
       console.log(err);
     }
   )
   .then(renderPlists);
+}
+
+function addNewPlist() {
+  var title = window.prompt("Enter Playlist Name");
+  $.ajax({
+    method: 'POST',
+    url: "/playlists",
+    data: { title: title }
+  })
+  .then(
+    function(pl) {
+      currentUser.playlists.push(pl);
+      renderPlists(currentUser);
+    });
+}
+
+function editPlist() {
+
 }
 
 // END OF PLAYLISTS
@@ -292,7 +299,7 @@ function renderRecommendations(recs) {
 //start playing song when clicking play button
 function playSong() {
   var $audio  = $('#audio-player');
-  var playUri = $(this).closest('span').attr('data-track-src');
+  var playUri = $(this).closest('div').attr('data-track-src');
   track = new Audio(playUri);
   track.volume = 1;
   console.log('Playing track:', track, track.duration);
@@ -301,9 +308,7 @@ function playSong() {
     console.log(evt.target);
     console.log('duration:', track.duration);
     $('#total-time').text(secsToMin(track.duration));
-    console.log('current time:', track.currentTime);
     track.addEventListener('timeupdate', function() {
-      console.log('current time: ', this.currentTime);
       $('#time-left').text(secsToMin(track.currentTime));
     })
     // var currentSongTime = track.currentTime.change(secsToMin(track.currentTime));
