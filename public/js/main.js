@@ -10,7 +10,8 @@ var renderTrack,
     $searchForm,
     $searchResults,
     $dashboard,
-    $playboard;
+    $playboard,
+    $mainboard;
 
 // Page load.
 $(function() {
@@ -19,15 +20,16 @@ $(function() {
   $searchResults = $("#search-results");
   $dashboard     = $("#dashboard");
   $playboard     = $("#playboard");
+  $mainboard     = $("#mainboard");
 
   // Compile templates
   renderTrack = _.template(`
     <% tracks.forEach(function(track) { %>
       <div class="song-total" data-track-src="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
         <% if (action === "play") { %>
-        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" class="song-stream">Play</button>
+        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" data-image-src="<%= track.user.avatar_url %>" class="song-stream">Play</button>
         <% } else { %>
-        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" class="song-stream">+</button>
+        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" data-image-src="<%= track.user.avatar_url %>" class="song-stream">+</button>
         <% } %>
           <img class="pic song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
           &nbsp&nbsp
@@ -50,6 +52,51 @@ $(function() {
       <% }); %>
     </div>`
   );
+
+  // PLAYLISTS
+
+renderPlist = _.template(`
+  <% user.playlists.forEach(function(pl) { %>
+    <li>
+      <div class="collapsible-header"><%= pl.title %></div>
+      <% pl.songs.forEach(function(s) { %>
+        <div data-track-src="<%= s.track_id %>" class="collapsible-body"><button class="play-playlist-song">&#9654;</button>
+          <%= s.artist %> - <%= s.title %>
+        </div>
+      <% }); %>
+      <div class="collapsible-body">
+        <button class="addasong">Add Song</button>
+      </div>
+    </li>
+  <% }); %>
+  <div class="collapsible-header">
+    <button>Create New Playlist</button>
+  </div>
+`)
+
+renderAddPLSong = _.template(`
+  <div class="col m2 astp">
+    <button class="add-plsong">Search</button>
+    <form id="search-song" class="search-song-form hidden">
+      <input type="text" id="search-add-value">
+    </form>
+    <ul class="found-songs hidden">
+    </ul>
+  </div>
+`)
+
+renderMainSongDiv = _.template(`
+
+    <div class="col album-art">
+      <img class="z-depth-3 circle" src="<%= song.image %>">
+    </div>
+    <div class="center-align artist-title">
+      <span><%= song.title %><br>
+      <%= song.artist %>
+      </span>
+    </div>
+
+`)
 
   // Add event handlers to page.
   $searchForm.on('submit', showTracks);
@@ -125,41 +172,6 @@ function createRecommendation(recommendationTrackId) {
 
 }
 
-/*
- * RENDER FUNCTIONS ====================================================
- */
-
-// PLAYLISTS
-
-renderPlist = _.template(`
-  <% user.playlists.forEach(function(pl) { %>
-    <li>
-      <div class="collapsible-header"><%= pl.title %></div>
-      <% pl.songs.forEach(function(s) { %>
-        <div data-track-src="<%= s.track_id %>" class="collapsible-body"><button class="play-playlist-song">&#9654;</button>
-          <%= s.artist %> - <%= s.title %>
-        </div>
-      <% }); %>
-      <div class="collapsible-body">
-        <button class="addasong">Add Song</button>
-      </div>
-    </li>
-  <% }); %>
-  <div class="collapsible-header">
-    <button>Create New Playlist</button>
-  </div>
-`)
-
-renderAddPLSong = _.template(`
-  <div class="col m2 astp">
-    <button class="add-plsong">Search</button>
-    <form id="search-song" class="search-song-form hidden">
-      <input type="text" id="search-add-value">
-    </form>
-    <ul class="found-songs hidden">
-    </ul>
-  </div>
-`)
 
 
 function renderPlists(user) {
@@ -215,12 +227,34 @@ function showTracks(evt) {
     .then(function(tracks) {
       console.log("Tracks:", tracks);
       renderTracks(tracks);
+      $('#modal1').openModal();
     });
 }
 
-function showRecommendations(evt) {
+function renderTracks(tracks) {
+  // Render the HTML.
+  var $trackItem = $(renderTrack({tracks: tracks, action: "play"}));
+  // Add listeners to the effected HTML.
+  $trackItem.on('click', 'button', playSong);
+  $trackItem.on('click', 'button', showSongInfo);
+
+  // Clear search results and append new ones to page.
+  $searchResults.empty().append($trackItem);
+}
+
+function showSongInfo(evt) {
+  var thisSong = $(evt.target)
   var trackId = $(evt.target).data("track-id");
   console.log("Show recommendations for: ", trackId);
+  var songInfo = {
+    trackId: thisSong.data("track-id"),
+    title: thisSong.data("title"),
+    artist: thisSong.data("artist"),
+    duration: thisSong.data("duration"),
+    image: thisSong.data("image-src").replace("large.jpg", "t500x500.jpg")
+  };
+  console.log("here's your main song: ", songInfo)
+  renderMainTrack(songInfo)
 
   fetchRecommendations(trackId)
     .then(function(recommendations) {
@@ -229,28 +263,13 @@ function showRecommendations(evt) {
     });
 }
 
-function renderTracks(tracks) {
-  // Render the HTML.
-  var $trackItem = $(renderTrack({tracks: tracks, action: "play"}));
+function renderMainTrack(song) {
+  var renderedSong = renderMainSongDiv({song: song});
+  console.log("here's the rendered song: ", renderedSong);
+  var $renderedSong = $(renderedSong);
+  console.log("here's the jquery selected version: ", $renderedSong)
 
-  // Add listeners to the effected HTML.
-  $trackItem.on('click', 'button', playSong);
-  $trackItem.on('click', 'button', showRecommendations);
-
-  // Clear search results and append new ones to page.
-  $searchResults.empty().append($trackItem);
-}
-
-function renderPossibleRecs($insertion, tracks) {
-  // Render the HTML.
-  var $trackItem = $(renderTrack({tracks: tracks, action: "add"}));
-
-  // Add listeners to the effected HTML.
-  // $trackItem.on('click', 'button', playSong);
-  $trackItem.on('click', 'button', createRecommendation);
-
-  // Clear search results and append new ones to page.
-  $insertion.empty().append($trackItem);
+  $mainboard.empty().append($renderedSong)
 }
 
 function renderRecommendations(recs) {
@@ -279,8 +298,21 @@ function renderRecommendations(recs) {
   $dashboard.append($recsHTML);
 }
 
+function renderPossibleRecs($insertion, tracks) {
+  // Render the HTML.
+  var $trackItem = $(renderTrack({tracks: tracks, action: "add"}));
+
+  // Add listeners to the effected HTML.
+  // $trackItem.on('click', 'button', playSong);
+  $trackItem.on('click', 'button', createRecommendation);
+
+  // Clear search results and append new ones to page.
+  $insertion.empty().append($trackItem);
+}
+
+
 /*
- * PAGE INTERACTIONS ===================================================
+ * MUSIC PLAYER ===================================================
  */
 
 

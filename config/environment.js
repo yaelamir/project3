@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 var localEnvVars = {
-  TITLE:      'vurs',
+  TITLE:      'V U R S',
   SAFE_TITLE: 'vurs_app'
 };
 
