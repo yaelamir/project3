@@ -47,6 +47,7 @@ $(function() {
 
   // Add event handlers to page.
   $searchForm.on('submit', showTracks);
+
 });
 
 /*
@@ -157,14 +158,122 @@ function renderRecommendations(recs) {
  * PAGE INTERACTIONS ===================================================
  */
 
+
+
+ var track;
+ var volume = 1;
+
+
+//start playing song when clicking play button
 function playSong() {
   var $audio  = $('#audio-player');
-  var playUri = $(this).parent().data('track-src');
+  var playUri = $(this).closest('span').attr('data-track-src');
+  track = new Audio(playUri);
+  track.volume = 1;
+  console.log('Playing track:', track, track.duration);
+  track.play();
+  track.addEventListener('canplaythrough', function(evt) {
+    console.log(evt.target);
+    console.log('duration:', track.duration);
+    $('#total-time').text(secsToMin(track.duration));
+    console.log('current time:', track.currentTime);
+    track.addEventListener('timeupdate', function() {
+      console.log('current time: ', this.currentTime);
+      $('#time-left').text(secsToMin(track.currentTime));
+    })
+    // var currentSongTime = track.currentTime.change(secsToMin(track.currentTime));
+    // var time = $('#time-left').attr('max', currentSongTime);
+    // console.log(time);
+  })
 
-  console.log("Play track:", playUri);
-  $audio.prepend(`<source src="${playUri}" type="audio/mpeg" />`);
-
-  $audio[0].pause();
-  $audio[0].load(); // suspends and restores all audio element
-  $audio[0].play();
+  // $audio.prepend(`<source src="${playUri}" type="audio/mpeg" />`);
+  // , function() {
+  //     $('#time-left').text()
+  //   });
+  // $audio[0].load(); // suspends and restores all audio element
+  // $audio[0].pause();
+  // $audio[0].play();
 }
+
+//converts seconds in floats to time
+function secsToMin (seconds) {
+  var mm = Math.floor(seconds / 60);
+  var ss = seconds % 60;
+  if (Math.round(ss) < 10) {
+    ss = '0' + ss.toFixed(0);
+  } else {
+    ss = ss.toFixed(0)
+  }
+  return mm + ":" + ss;
+}
+
+
+
+ $('button.song-stream').on('click', playSong);
+
+//toggle play and pause button
+ $('#play').on('click', function() {
+  if (track.paused === false) {
+    console.log('song paused');
+    track.pause();
+    $('#play').text('play_arrow');
+  } else if (track.paused === true) {
+    console.log('song paused');
+    $('#play').text('pause');
+    track.play();
+  }
+})
+
+
+
+//toggle volume when muted or not
+ $('#volume').on('click', function() {
+  if (volume === 1) {
+    track.muted = true;
+    volume = 0;
+    $("#volume").text('volume_off');
+    console.log('volume off');
+  } else if (volume === 0) {
+    track.muted = false;
+    volume = 1;
+    $("#volume").text('volume_up');
+    console.log('volume on');
+  // } else {
+  //   (volume === false)
+  //   track.muted = true;
+  //   $("#volume").text('volume_up');
+  //   console.log('volume on');
+  }
+  });
+
+ //time remaining for song and duration
+  $('#time-left').on('change', function() {
+    console.log(track.currentTime);
+    $('#time-left').attr(track.currentTime);
+  })
+
+ // $("#duration").on("change", function() {
+ //        track.currentTime = $(this).val();
+ //        $("#duration").attr("max", track.duration);
+ //    });
+
+ // duration
+
+
+
+ // $('#prev').on('click', );
+ // $('#next').on('click', );
+ // $('#fav').on('click', );
+
+// var playUri = $(this).parent().data('track-src');
+// var songs = new Audio();
+//   $('#play').on('click', function() {
+//   })
+
+
+
+
+
+
+
+

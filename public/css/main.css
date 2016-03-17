@@ -64,6 +64,79 @@ a {
 audio {
   width: 100%;
   position: absolute;
-  bottom:0;
-    font-family: 'Raleway', sans-serif;
+  bottom: 0;
+  font-family: 'Raleway', sans-serif;
 }
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1em;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+.row .col.s12 {
+  width: 100%;
+  margin-left: 0;
+  text-align: center;
+  border: none;
+}
+
+.controls i {
+  vertical-align: middle;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 1.8em;
+}
+
+.times {
+  display: inline;
+  font: white;
+  float: right;
+  letter-spacing: 3px;
+}
+
+.strong {
+  padding: 10px;
+}
+
+#footer {
+  border: none;
+}
+#audio-player {
+  margin-bottom: 0;
+}
+
+footer {
+  margin-bottom: 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.row {
+  margin-bottom: 0;
+  bottom: 0;
+}
+
+input span {
+  display:none;
+}
+
+
+
+
+
+
+
+
+

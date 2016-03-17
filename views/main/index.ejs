@@ -13,6 +13,7 @@
   <!-- Materialize -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <!-- Soundcloud SDK -->
   <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
@@ -61,10 +62,11 @@
 </main>
 
 <footer>
-  <audio id="audio-player" controls="controls"></audio>
+  <%- include('../partials/player') %>
+  <!-- <audio id="audio-player" controls="controls"></audio> -->
 </footer>
 
-<script src='/js/main.js'></script>
-<!-- <script src='/js/ajaxsoundcloudtest.js'></script> -->
+<script src="/js/main.js"></script>
+
 </body>
 </html>
