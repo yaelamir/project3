@@ -65,35 +65,36 @@ $(function() {
 
   // PLAYLISTS
 
-renderPlist = _.template(`
-  <% user.playlists.forEach(function(pl) { %>
-    <li>
-      <div class="collapsible-header"><%= pl.title %></div>
-      <% pl.songs.forEach(function(s) { %>
-        <div data-track-src="<%= s.track_id %>" class="collapsible-body"><button class="play-playlist-song">&#9654;</button>
-          <%= s.artist %> - <%= s.title %>
-        </div>
-      <% }); %>
-      <div class="collapsible-body">
-        <button class="addasong">Add Song</button>
-      </div>
-    </li>
-  <% }); %>
-  <div class="collapsible-header">
-    <button>Create New Playlist</button>
-  </div>
-`)
+  renderPlist = _.template(`
+    <% user.playlists.forEach(function(pl) { %>
+      <li>
+        <div class="collapsible-header" style="color: black;""><%= pl.title %></div>
+        <% if (pl.songs.length > 0) { %>
+          <% pl.songs.forEach(function(s) { %>
+            <div class="collapsible-body" data-track-src="https://api.soundcloud.com/tracks/<%= s.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c">
+              <button data-track-id="<%= s.track_id %>" class="play-playlist-song">&#9654;</button>
+              <%= s.artist %> - <%= s.title %>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="collapsible-body">No Songs Added Yet!</div>
+        <% } %>
+      </li>
+    <% }); %>
+    <div class="collapsible-header">
+      <button id="add-new-pl">Create New Playlist</button>
+    </div>
+  `)
 
-renderAddPLSong = _.template(`
-  <div class="col m2 astp">
-    <button class="add-plsong">Search</button>
-    <form id="search-song" class="search-song-form hidden">
-      <input type="text" id="search-add-value">
-    </form>
-    <ul class="found-songs hidden">
-    </ul>
-  </div>
-`)
+  renderAddPLSong = _.template(`
+    <div class="astp">
+      <form id="search-song" class="search-song-form hidden">
+        <input type="text" id="search-add-value">
+      </form>
+      <ul class="found-songs hidden">
+      </ul>
+    </div>
+  `)
 
 renderMainSongDiv = _.template(`
 
@@ -195,37 +196,6 @@ function createRecommendation(recommendationTrackId) {
   })
 
 }
-
-renderPlist = _.template(`
-  <% user.playlists.forEach(function(pl) { %>
-    <li>
-      <div class="collapsible-header" style="color: black;""><%= pl.title %></div>
-      <% if (pl.songs.length > 0) { %>
-        <% pl.songs.forEach(function(s) { %>
-          <div class="collapsible-body" data-track-src="https://api.soundcloud.com/tracks/<%= s.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c">
-            <button data-track-id="<%= s.track_id %>" class="play-playlist-song">&#9654;</button>
-            <%= s.artist %> - <%= s.title %>
-          </div>
-        <% }); %>
-      <% } else { %>
-        <div class="collapsible-body">No Songs Added Yet!</div>
-      <% } %>
-    </li>
-  <% }); %>
-  <div class="collapsible-header">
-    <button id="add-new-pl">Create New Playlist</button>
-  </div>
-`)
-
-renderAddPLSong = _.template(`
-  <div class="astp">
-    <form id="search-song" class="search-song-form hidden">
-      <input type="text" id="search-add-value">
-    </form>
-    <ul class="found-songs hidden">
-    </ul>
-  </div>
-`)
 
 function renderPlists(user) {
   $plylst = $(renderPlist({user: user}));
@@ -397,35 +367,42 @@ function renderPossibleRecs($insertion, tracks) {
 
 
 
- var track;
- var volume = 1;
-
+var track = new Audio();
+var prevSongsPlayed = [];
+var nextSongsPlayed = [];
 
 //start playing song when clicking play button
-function playSong() {
-  var playUri = $(this).closest('div').attr('data-track-src');
-  track = new Audio(playUri);
+function playSong(prev) {
+  if (typeof prev === 'string') {
+    track.src = prev;
+  } else {
+    track.src = $(this).closest('div').attr('data-track-src');
+    prevSongsPlayed.push(track.src);
+  }
+
+  // track = new Audio(playUri);
   track.volume = 1;
   console.log('Playing track:', track);
   track.play();
-  track.addEventListener('ended', function(track) {
-        track.src = "new url";
-        track.pause();
-        track.load();
-        track.play();
-    });
+  // track.addEventListener('ended', function(track) {
+  //       track.src = "new url";
+  //       track.pause();
+  //       track.load();
+  //       track.play();
+  //   });
   track.addEventListener('canplaythrough', function(evt) {
     console.log('evt.target', evt.target);
     console.log('duration:', track.duration);
     $('#total-time').text(secsToMin(track.duration));
     track.addEventListener('timeupdate', function() {
       $('#time-left').text(secsToMin(track.currentTime));
-      $('#duration').val(track.currentTime/track.duration*100);
+      //
+      $('#duration').val(track.currentTime / track.duration * 100);
     })
   })
 }
 
-//converts seconds in floats to time
+//converts seconds in float to time
 function secsToMin (seconds) {
   var mm = Math.floor(seconds / 60);
   var ss = seconds % 60;
@@ -450,10 +427,27 @@ function secsToMin (seconds) {
     $('#play').text('pause');
     track.play();
   }
-})
+});
+
+$('#prev').on('click', function() {
+  var song = prevSongsPlayed.pop();
+  if (song) {
+    nextSongsPlayed.push(track.src);
+    playSong(song);
+  }
+});
+
+$('#next').on('click', function() {
+  var song = nextSongsPlayed.pop();
+  if (song) {
+    prevSongsPlayed.push(track.src);
+    playSong(song);
+  }
+});
 
 
 
+var volume = 1;
 //toggle volume when muted or not
  $('#volume').on('click', function() {
   if (volume === 1) {
