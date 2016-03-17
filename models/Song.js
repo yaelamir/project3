@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
 var upvoteSchema = new mongoose.Schema({
   song: {type: mongoose.Schema.Types.ObjectId,
          ref: "Song"},
-  upvotes: Number,
+  upvotes: {type: Number, default: 1},
   upvotee: [{type: mongoose.Schema.Types.ObjectId,
             ref: "Vurser"}]
 })

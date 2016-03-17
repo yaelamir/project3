@@ -15,10 +15,14 @@ var mainController      = require('../controllers/main'),
 indexrouter.get('/', mainController.index);
 
 // users resource paths:
+indexrouter.get('/users/me', vursersController.showCurrentUser);
 indexrouter.get('/users/:id', vursersController.show);
 
 // songs path:
 indexrouter.get('/songs/:id', songsController.show);
+indexrouter.post('/api/addrecs', songsController.addRecommendation);
+
+
 
 
 module.exports = indexrouter;
