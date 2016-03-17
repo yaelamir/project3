@@ -292,6 +292,8 @@ function showTracks(evt) {
     .then(function(tracks) {
       console.log("Tracks:", tracks);
       renderTracks(tracks);
+            $('#modal1').openModal();
+
       $('#add-rec-btn').on("click", function() {
         $('.search-rec-form, .found-recs').toggleClass('hidden');
         // $searchResults.hide();
@@ -303,20 +305,9 @@ function showTracks(evt) {
         });
       });
     });
+
 }
 
-
-function showRecommendations(evt) {
-  var trackId = $(evt.target).data("track-id");
-  console.log("Show recommendations for: ", trackId);
-
-  fetchRecommendations(trackId)
-    .then(function(recommendations) {
-      // render the recommendations to the screen
-      renderRecommendations(recommendations);
-      $('#modal1').openModal();
-    });
-}
 
 function renderTracks(tracks) {
   // Render the HTML.
