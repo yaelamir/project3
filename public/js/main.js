@@ -209,6 +209,10 @@ function addNewPlist() {
     });
 }
 
+function editPlist() {
+
+}
+
 // END OF PLAYLISTS
 
 function showTracks(evt) {
@@ -304,9 +308,7 @@ function playSong() {
     console.log(evt.target);
     console.log('duration:', track.duration);
     $('#total-time').text(secsToMin(track.duration));
-    console.log('current time:', track.currentTime);
     track.addEventListener('timeupdate', function() {
-      console.log('current time: ', this.currentTime);
       $('#time-left').text(secsToMin(track.currentTime));
     })
     // var currentSongTime = track.currentTime.change(secsToMin(track.currentTime));

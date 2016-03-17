@@ -18,14 +18,11 @@ indexrouter.get('/', mainController.index);
 // users resource paths:
 indexrouter.get('/users/me', vursersController.showCurrentUser);
 indexrouter.get('/users/:id', vursersController.show);
+indexrouter.post('/playlists', vursersController.addPlaylist);
+indexrouter.put('/playlists/:id', vursersController.editPlaylist);
 
 // songs path:
 indexrouter.get('/songs/:id', songsController.show);
 indexrouter.post('/api/addrecs', songsController.addRecommendation);
-
-// playlists path:
-indexrouter.post('/playlists', playlistsController.addPlaylist);
-
-
 
 module.exports = indexrouter;
