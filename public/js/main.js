@@ -292,7 +292,7 @@ function renderRecommendations(recs) {
 //start playing song when clicking play button
 function playSong() {
   var $audio  = $('#audio-player');
-  var playUri = $(this).closest('span').attr('data-track-src');
+  var playUri = $(this).closest('div').attr('data-track-src');
   track = new Audio(playUri);
   track.volume = 1;
   console.log('Playing track:', track, track.duration);
