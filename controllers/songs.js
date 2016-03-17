@@ -30,22 +30,13 @@ function addRecommendation(req, res, next) {
         //If that recommended song exists,
         if (recSong) {
 
-          var foundRec = song.recommendations.filter(function (recsonginquestion) {
-            return recsonginquestion.song.toString() === recSong._id.toString();
-            console.log("the song in question: ", recsonginquestion, "the actual song _id: ", recsonginquestion.song, "is this true?: should be.... ", (recsonginquestion.song).toString() === recSong._id.toString())
-          });
+          var foundRec = findRecommendedSongInRecommendedList(song, recSong);
           if (foundRec.length === 0) {
-            console.log("making new rec: ", foundRec, foundRec.length)
             addRecommendationToCurrSong(song, recSong, req.body.user, res);
           } else {
-            console.log("foundyouuuuu")
-            foundRec[0].upvotes += 1;
-            var foundRecperson = foundRec[0].upvotee.filter(function (recpersoninquestion) {
-            return recpersoninquestion.toString() === req.body.user;
-          });
-            if (foundRecperson.length === 0) {
-            foundRec[0].upvotee.push(req.body.user);
-            }
+            upvoteRecommendation(foundRec);
+            addRecommenderToUpvoteeList(req.body.user, foundRec);
+
             song.save(function(err){
               console.log("errr: ", err)
               if (err) {
@@ -97,5 +88,23 @@ function addRecommendationToCurrSong(currSong, recSong, user, res) {
   });
 }
 
+function upvoteRecommendation(recSong) {
+  recSong.upvotes += 1;
+};
+
+function addRecommenderToUpvoteeList(user, recSong) {
+  var foundRecperson = recSong.upvotee.filter(function (recpersoninquestion) {
+    return recpersoninquestion.toString() === user;
+  });
+  if (foundRecperson.length === 0) {
+    recSong.upvotee.push(user);
+  }
+}
+
+function findRecommendedSongInRecommendedList(currSong, recSong) {
+  return currSong.recommendations.filter(function (recsonginquestion) {
+    return recsonginquestion.song.toString() === recSong._id.toString();
+  })[0];
+}
 //TOP SONG FUNCTION GOES HERE
 
