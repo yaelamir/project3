@@ -1,33 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
-    <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+  <!-- Utility Libs (jQuery, Lodash) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.js"></script>
+
+  <!-- Materialize -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+  <!-- Soundcloud SDK -->
+  <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="/css/main.css">
+
 </head>
 <body>
+  <!-- see your auth user login, logout -->
   <%- include('../partials/nav') %>
+
+
   <div class=container>
-    <form id="searchbox">
-      <input type="text" id="search" placeholder="Search">
-      <input hidden type="submit" value="Search">
+    <form id="search-form">
+      <input type="text" id="search-value" placeholder="Search">
     </form>
-    <div  id="searchResults">
-    </div >
   </div>
 
+    <div  id="searchResults">
+    </div >
   <div class="">
     <div class="row">
-      <div class="col s2 blue darken-3">fdsafdsafdsafasdfdass</div>
+
+      <div class="col s2 blue darken-3">
+        <section id="search-results"></section>
+      </div>
+
       <div class="center-align  col s7 main-content">
         <div class="col s5 offset-s3 album-art">
           <img class="z-depth-3 responsive-img circle" src="https://i1.sndcdn.com/artworks-000143749440-rwvxmj-t500x500.jpg">
         </div>
-
       </div>
-      <div class="col s3 pull-s1">
-        <ul class=" collection z-depth-3">
+
+      <div id="dashboard" class="dashboard col s3 pull-s1">
+        <!-- <ul class=" collection z-depth-3">
             <li class=" collection-item transparent avatar">
               <img src="https://i1.sndcdn.com/artworks-000004659432-8zbrtt-t500x500.jpg" alt="" class="circle">
               <span class="title">TITLE</span>
@@ -52,14 +67,13 @@
               <p>Artist | Song
               </p>
             </li>
-          </ul>
-
-
+          </ul> -->
+          <section id="search-results"></section>
       </div>
     </div>
   </div>
 
   <audio id="audio-player" controls="controls"></audio>
-
+  <script src='/js/main.js'></script>
 </body>
 </html>
