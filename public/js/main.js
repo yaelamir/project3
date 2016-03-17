@@ -397,35 +397,35 @@ function renderPossibleRecs($insertion, tracks) {
 
 
 
- var track;
- var volume = 1;
-
+ var track = new Audio();
 
 //start playing song when clicking play button
 function playSong() {
-  var playUri = $(this).closest('div').attr('data-track-src');
-  track = new Audio(playUri);
+  track.src = $(this).closest('div').attr('data-track-src');
+
+  // track = new Audio(playUri);
   track.volume = 1;
   console.log('Playing track:', track);
   track.play();
-  track.addEventListener('ended', function(track) {
-        track.src = "new url";
-        track.pause();
-        track.load();
-        track.play();
-    });
+  // track.addEventListener('ended', function(track) {
+  //       track.src = "new url";
+  //       track.pause();
+  //       track.load();
+  //       track.play();
+  //   });
   track.addEventListener('canplaythrough', function(evt) {
     console.log('evt.target', evt.target);
     console.log('duration:', track.duration);
     $('#total-time').text(secsToMin(track.duration));
     track.addEventListener('timeupdate', function() {
       $('#time-left').text(secsToMin(track.currentTime));
-      $('#duration').val(track.currentTime/track.duration*100);
+      //
+      $('#duration').val(track.currentTime / track.duration * 100);
     })
   })
 }
 
-//converts seconds in floats to time
+//converts seconds in float to time
 function secsToMin (seconds) {
   var mm = Math.floor(seconds / 60);
   var ss = seconds % 60;
