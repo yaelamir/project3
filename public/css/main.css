@@ -6,13 +6,13 @@ body {
 
 body {
   font-size: 14px;
-  background: url("http://wallpaperstock.net/outer-space-geometry-wallpapers_36810_1920x1080.jpg");
+  /*background: url("http://wallpaperstock.net/outer-space-geometry-wallpapers_36810_1920x1080.jpg");*/
   background-size: cover;
-  /*background-color: #1d2120;*/
+  background-color: #1d2120;
   font-family: 'Raleway', sans-serif;
   color: white;
-  overflow: hidden;
-  /*padding: 50px;*/
+/*  overflow: hidden;
+*/  /*padding: 50px;*/
 }
 
 .top-nav {
@@ -30,7 +30,7 @@ a {
   font-weight: 200;
 }
 
-@keyframes selectedrecommendation {
+/*@keyframes selectedrecommendation {
    0%   {border-bottom: 1px solid red;}
     25%  {border-top: 1px solid red;}
     50%  {border-left: 1px solid red;}
@@ -39,7 +39,7 @@ a {
 .collection:hover {
   animation-name: selectedrecommendation;
   animation-duration: 4s;
-}
+}*/
 
 
 .collection .collection-item {

@@ -3,7 +3,8 @@ var Song = require("../models/Song");
 
 module.exports = {
   show: show,
-  addRecommendation: addRecommendation
+  addRecommendation: addRecommendation,
+  fetchRecommendation: fetchRecommendation
 };
 
 function show(req, res, next) {
@@ -40,7 +41,7 @@ function addRecommendation(req, res, next) {
             song.save(function(err){
               console.log("errr: ", err)
               if (err) {
-                res.json({error: "oh no! not saved", success: null})
+                res.json({error: "oh no rec existed but couldnt do the thing! not saved", success: null})
               } else {
                 res.json({error: null, success: "recommendations saved!"})
               }
@@ -76,6 +77,38 @@ function addRecommendation(req, res, next) {
   })
 }
 
+//============================================================
+
+
+function fetchRecommendation(req, res, next){
+  // Find the current song
+  var track_id = req.params.track_id;
+  Song.findOne({track_id: track_id}, function(err, song){
+    console.log("Pare, this is your CURRENT song: ", song);
+    if (err) console.log(err);
+    // If the song exists, find the recommended song
+    if (song) {
+      console.log("\nRECCSSSSS: ", song.recommendations)
+      if (song.recommendations.length <= 0) song.recommendations = null;
+      res.json({recommendations: song.recommendations});
+      // Song.findOne({track_id: req.body.recTrack.track_id}, function(error, recSong){
+      //   console.log("Pare, this is your RECOMMENDED song: ", recSong);
+      //   // If it IS the recommended song...
+      //   if (err) console.log(err);
+      //   if (recSong){
+      //     recSong.forEach(function(rec){
+      //       recSong1 = req.body.recTrack.track_id;
+      //       res.json({recSong1});
+      //       console.log(recSong1);
+      //     })
+      //   }
+      // })
+    }
+  })
+}
+
+//============================================================
+
 function addRecommendationToCurrSong(currSong, recSong, user, res) {
   currSong.recommendations.push({song: recSong, upvotee: user});
   currSong.save(function(err){
@@ -104,7 +137,7 @@ function addRecommenderToUpvoteeList(user, recSong) {
 function findRecommendedSongInRecommendedList(currSong, recSong) {
   return currSong.recommendations.filter(function (recsonginquestion) {
     return recsonginquestion.song.toString() === recSong._id.toString();
-  })[0];
+  });
 }
 //TOP SONG FUNCTION GOES HERE
 

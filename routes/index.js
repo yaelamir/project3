@@ -21,6 +21,7 @@ indexrouter.get('/users/:id', vursersController.show);
 // songs path:
 indexrouter.get('/songs/:id', songsController.show);
 indexrouter.post('/api/addrecs', songsController.addRecommendation);
+indexrouter.get('/api/recs/:track_id', songsController.fetchRecommendation);
 
 
 
