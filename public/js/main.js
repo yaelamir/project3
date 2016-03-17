@@ -42,20 +42,22 @@ $(function() {
           <%= track.title %>
       </div>
     <% }); %>
+    <button id="add-rec-btn" class="create-rec">RECOMMEND A SONG</button>
+    <form id="search-rec" class="search-rec-form hidden">
+      <input type="text" id="search-rec-value" placeholder="Search">
+    </form>
+    <section id="recs-container">
+    </section>
   `);
 
   renderRecs = _.template(`
     <div class="col m4 rec">
-      <div>TRACK NAME</div><div>TRACK ARTIST</div>
-      <button class="create-rec">RECOMMEND A SONG</button>
-      <form id="search-rec" class="search-rec-form hidden">
-        <input type="text" id="search-rec-value" placeholder="Search">
-      </form>
       <ul class=" z-depth-3 collection found-recs hidden">
-      </ul>
       <% recs.forEach(function(rec) { %>
         <li class="collection-item transparent avatar"> RECOMMENDATION <img class="circle" src=""> <span class="title">Title</span></li>
+        <div>RECSSSSS<%= rec.song %> <%= rec.upvotes %> </div>
       <% }); %>
+      </ul>
     </div>`
   );
 
@@ -88,7 +90,18 @@ function getTracks(query) {
 
 function fetchRecommendations(trackId) {
   // TODO: Implement fetch recommendations...
-  return new Promise(function(resolve) { resolve([]); })
+  console.log('fetch', trackId)
+  $.ajax({
+    type: 'GET',
+    url: '/api/recs/' + trackId,
+  }).then(function(results){
+    console.log('fetched results', results)
+    return results;
+  }).fail(function(error){
+    console.log(error)
+  })
+
+  return new Promise(function(resolve) { resolve([results]); })
 }
 
 function createRecommendation(recommendationTrackId) {
@@ -97,7 +110,9 @@ function createRecommendation(recommendationTrackId) {
       currentTrackTitle,
       currentTrackArtist,
       currentTrackDuration;
-  var audioSrc = document.getElementById('audio-player').children[0].src.split('/')
+      // console.log("TRACK SRC: ", track)
+  // var audioSrc = document.getElementById('audio-player').children[0].src.split('/')
+  var audioSrc = track.src.split('/')
   audioSrc.forEach(function(str){
     if(/^\d+$/.test(str)){
       currentTrackId = str;
@@ -106,7 +121,7 @@ function createRecommendation(recommendationTrackId) {
   var currentTrackInfo = $("button[data-track-id=" + currentTrackId + "]");
   var currentTrackDataset = currentTrackInfo[0].dataset;
   // TODO: implement!
-  console.log("IMPLEMENT ME", recommendationTrackId, "\nCURR: ", currentTrackInfo);
+  console.log("IMPLEMENT ME", recommendationTrackId, "\nCURR: ", currentTrackDataset);
   var data = {
       recTrack: {
         title:    recommendationTrackId.title,
@@ -177,6 +192,20 @@ function renderPlists(user) {
   $("#pl").empty().append($plylst);
 }
 
+
+function renderAddSearch(songs) {
+  var addSearch = renderAddPLSong({songs: songs});
+  var $addSearch = $(addSearch);
+
+  var $addSearchVal = $addSearch.find("#search-add-value");
+
+  $addSearch.find('.add-plsong').on("click", function() {
+    $addSearch.find('.search-song-form, .found-songs').toggleClass('hidden');
+  });
+
+  $playboard.append($addSearch);
+}
+
 function loadPlaylists() {
   $.ajax({
     method: "GET",
@@ -222,8 +251,19 @@ function showTracks(evt) {
     .then(function(tracks) {
       console.log("Tracks:", tracks);
       renderTracks(tracks);
+      $('#add-rec-btn').on("click", function() {
+        $('.search-rec-form, .found-recs').toggleClass('hidden');
+        // $searchResults.hide();
+      });
+      $('.search-rec-form').on("submit", function(evt) {
+        evt.preventDefault();
+        getTracks($('#search-rec-value').val()).then(function(tracks) {
+          renderPossibleRecs($addSearch.find(".found-songs"), tracks);
+        });
+      });
     });
 }
+
 
 function showRecommendations(evt) {
   var trackId = $(evt.target).data("track-id");
@@ -270,14 +310,16 @@ function renderRecommendations(recs) {
   var $recsHTML = $(recsHTML);
   var $recsSearchVal = $recsHTML.find("#search-rec-value");
 
-  $recsHTML.find('.create-rec').on("click", function() {
-    $recsHTML.find('.search-rec-form, .found-recs').toggleClass('hidden');
-  });
+
   $recsHTML.find('.search-rec-form').on("submit", function(evt) {
     evt.preventDefault();
     getTracks($recsSearchVal.val()).then(function(tracks) {
       console.log("Rec tracks:", tracks);
-      renderPossibleRecs($recsHTML.find(".found-recs"), tracks);
+
+
+      // need to render possible recs into <section id="recs-container"> ?
+
+      // renderPossibleRecs($recsHTML.find(".found-recs"), tracks);
     });
   });
 
@@ -314,8 +356,6 @@ function playSong() {
     console.log('duration:', track.duration);
     $('#total-time').text(secsToMin(track.duration));
     track.addEventListener('timeupdate', function() {
-
-      //checks
       $('#time-left').text(secsToMin(track.currentTime));
       $('#duration').val(track.currentTime/track.duration*100);
     })
