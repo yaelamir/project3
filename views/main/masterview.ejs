@@ -32,7 +32,13 @@
     <div class="row">
 
       <div class="col s2 blue darken-3">
-        <section id="search-results"></section>
+        <% if (user) { %>
+          <div id="playboard">Playlists:
+            <ul class="plbar collapsible" data-collapsible="expandable" id="pl">
+            </ul>
+          </div>
+        <% } %>
+        <!-- <section id="search-results"></section> -->
       </div>
 
       <div class="center-align  col s7 main-content">
