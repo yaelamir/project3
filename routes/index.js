@@ -15,6 +15,7 @@ var mainController      = require('../controllers/main'),
 indexrouter.get('/', mainController.index);
 
 // users resource paths:
+indexrouter.get('/users/me', vursersController.showCurrentUser);
 indexrouter.get('/users/:id', vursersController.show);
 
 // songs path:

@@ -19,7 +19,7 @@ $(function() {
   // Compile templates
   renderTrack = _.template(`
     <% tracks.forEach(function(track) { %>
-      <span class="song-total" data-track-src="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
+      <div class="song-total" data-track-src="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
         <% if (action === "play") { %>
         <button data-track-id="<%= track.id %>" class="song-stream">Play</button>
         <% } else { %>
@@ -28,12 +28,12 @@ $(function() {
           <img class="pic song-image" src="<%= track.user.avatar_url %>" style="max-width: 20px;">
           &nbsp&nbsp
           <%= track.title %>
-      </span>
+      </div>
     <% }); %>
   `);
 
   renderRecs = _.template(`
-    <div class="col m4 rec">
+    <div class="rec">
       <div>TRACK NAME</div><div>TRACK ARTIST</div>
       <button class="create-rec">RECOMMEND A SONG</button>
       <form id="search-rec" class="search-rec-form hidden">
@@ -49,6 +49,8 @@ $(function() {
 
   // Add event handlers to page.
   $searchForm.on('submit', showTracks);
+
+  loadPlaylists();
 });
 
 /*
@@ -86,8 +88,18 @@ function createRecommendation(currentTrackId, recommendationTrackId) {
 
 
 
-// ------------------------------------------------------
-
+// ----P-L-A-Y-L-I-S-T-S------------------------------------------------
+//
+// 1. See playlists ✔
+// 2. See songs (API call) ✔
+// 3. Play songs / See recommendations
+// 4. Add Playlist / Push playlist to user
+// 5. Edit playlist
+//    - Add song / Push song to user playlist
+//    - Rename playlist
+//    - Delete song
+//    - Delete playlist
+//
 
 var user = {
   name: "Fabio",
@@ -108,7 +120,9 @@ renderPlist = _.template(`
     <li>
       <div class="collapsible-header"><%= pl.title %></div>
       <% pl.songs.forEach(function(s) { %>
-        <div class="collapsible-body"><button >&#9654;</button><%= s %></div>
+        <div data-track-src="<%= s.track_id %>" class="collapsible-body"><button class="play-playlist-song">&#9654;</button>
+          <%= s.artist %> - <%= s.title %>
+        </div>
       <% }); %>
       <div class="collapsible-body">
         <button class="addasong">Add Song</button>
@@ -131,12 +145,12 @@ renderAddPLSong = _.template(`
   </div>
 `)
 
-function test() {console.log("test")};
+// function test() {console.log("test")};
 
 function renderPlists(user) {
   var $plylst = $(renderPlist({user: user}));
 
-  $('#playsong').on('click', 'button', playSong);
+  $('#playboard').on('click', '.play-playlist-song', playSong);
   $('#playboard').on('click', '.addasong', renderAddSearch);
 
   $("#pl").empty().append($plylst);
@@ -161,21 +175,36 @@ function renderAddSearch(songs) {
   $playboard.append($addSearch);
 }
 
-function renderPossibleSongs($insert, tracks) {
-  var $trackItem = $(renderTrack({tracks: tracks, action: "both"}));
-  $trackItem.on('click', 'button', createRecommendation);
+// function renderPossibleSongs($insert, tracks) {
+//   var $trackItem = $(renderTrack({tracks: tracks, action: "both"}));
+//   $trackItem.on('click', 'button', createRecommendation);
 
-  $insert.empty().append($trackItem);
+//   $insert.empty().append($trackItem);
+// }
+
+// function addSongToPlist() {}
+// function addNewPlist() {}
+
+
+
+
+// ---------------------------------------------------------------------
+
+function loadPlaylists() {
+  $.ajax({
+    method: "GET",
+    url:    "/users/me"
+  })
+  .then(
+    function(currentUser) {
+      return currentUser;
+    },
+    function(err) {
+      console.log(err);
+    }
+  )
+  .then(renderPlists);
 }
-
-function addSongToPlist() {}
-function addNewPlist() {}
-
-renderPlists(user);
-
-// ------------------------------------------------------
-
-
 
 function showTracks(evt) {
   evt.preventDefault();

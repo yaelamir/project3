@@ -1,7 +1,6 @@
 var mongoose = require('mongoose'),
     debug    = require('debug')('app:models');
 
-
 var playlistSchema = new mongoose.Schema({
   title: String,
   songs: [{type: mongoose.Schema.Types.ObjectId,
