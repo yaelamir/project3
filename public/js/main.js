@@ -39,10 +39,10 @@ $(function() {
       <form id="search-rec" class="search-rec-form hidden">
         <input type="text" id="search-rec-value" placeholder="Search">
       </form>
-      <ul class="found-recs hidden">
+      <ul class=" z-depth-3 collection found-recs hidden">
       </ul>
       <% recs.forEach(function(rec) { %>
-        <div> RECOMMENDATION </div>
+        <li class="collection-item transparent avatar"> RECOMMENDATION <img class="circle" src=""> <span class="title">Title</span></li>
       <% }); %>
     </div>`
   );
