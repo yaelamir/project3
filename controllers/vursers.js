@@ -4,8 +4,8 @@ var Song = require("../models/Song");
 module.exports = {
   show:  show,
   showCurrentUser: showCurrentUser,
-  addPlaylist: addPlaylist,
-  editPlaylist: editPlaylist
+  addPlaylist: addPlaylist
+  // editPlaylist: editPlaylist
 };
 
 

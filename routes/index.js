@@ -8,8 +8,7 @@ var express = require('express'),
 // Require controllers.
 var mainController      = require('../controllers/main'),
     vursersController   = require('../controllers/vursers'),
-    songsController     = require('../controllers/songs'),
-    playlistsController = require('../controllers/playlists');
+    songsController     = require('../controllers/songs');
 
 
 // root path:
@@ -19,7 +18,6 @@ indexrouter.get('/', mainController.index);
 indexrouter.get('/users/me', vursersController.showCurrentUser);
 indexrouter.get('/users/:id', vursersController.show);
 indexrouter.post('/playlists', vursersController.addPlaylist);
-indexrouter.put('/playlists/:id', vursersController.editPlaylist);
 
 // songs path:
 indexrouter.get('/songs/:id', songsController.show);
