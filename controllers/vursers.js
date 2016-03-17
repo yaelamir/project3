@@ -44,6 +44,6 @@ function addPlaylist(req, res) {
   });
 }
 
-function editPlaylist(req, res) {
-  req.user.playlists{}
-}
+// function editPlaylist(req, res) {
+//   req.user.playlists{}
+// }
