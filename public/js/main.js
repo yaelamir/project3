@@ -92,14 +92,18 @@ function createRecommendation(recommendationTrackId) {
   // TODO: implement!
   console.log("IMPLEMENT ME", recommendationTrackId, "\nCURR: ", currentTrackInfo);
   var data = {
-      currentTrack: currentTrackId,
-      currentTitle: currentTrackDataset.title,
-      currentArtist: currentTrackDataset.artist,
-      currentDuration: currentTrackDataset.duration,
-      recTrackId: recommendationTrackId.trackId,
-      recTrackTitle: recommendationTrackId.title,
-      recTrackArtist: recommendationTrackId.artist,
-      recTrackDuration: recommendationTrackId.duration,
+      recTrack: {
+        title:    recommendationTrackId.title,
+        artist:   recommendationTrackId.artist,
+        length:   recommendationTrackId.duration,
+        track_id: recommendationTrackId.trackId
+      },
+      currentTrack: {
+        title:    currentTrackDataset.title,
+        artist:   currentTrackDataset.artist,
+        length:   currentTrackDataset.duration,
+        track_id: currentTrackId
+      },
       user: $('#userid').text()
     }
   $.ajax({
