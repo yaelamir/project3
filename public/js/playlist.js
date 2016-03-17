@@ -115,15 +115,16 @@ renderPlist = _.template(`
   <% user.playlists.forEach(function(pl) { %>
     <li>
       <div class="collapsible-header" style="color: black;""><%= pl.title %></div>
-      <% pl.songs.forEach(function(s) { %>
-        <div class="collapsible-body" data-track-src="https://api.soundcloud.com/tracks/<%= s.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c">
-          <button data-track-id="<%= s.track_id %>" class="play-playlist-song">&#9654;</button>
-          <%= s.artist %> - <%= s.title %>
-        </div>
-      <% }); %>
-      <div class="collapsible-body">
-        <button class="addasong toggAdd">Add Song</button>
-      </div>
+      <% if (pl.songs.length > 0) { %>
+        <% pl.songs.forEach(function(s) { %>
+          <div class="collapsible-body" data-track-src="https://api.soundcloud.com/tracks/<%= s.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c">
+            <button data-track-id="<%= s.track_id %>" class="play-playlist-song">&#9654;</button>
+            <%= s.artist %> - <%= s.title %>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="collapsible-body">No Songs Added Yet!</div>
+      <% } %>
     </li>
   <% }); %>
   <div class="collapsible-header">
@@ -163,13 +164,6 @@ function loadPlaylists() {
     }
   )
   .then(renderPlists);
-}
-
-function renderPossibleSongs($insert, tracks) {
-  var $trackItem = $(renderTrack({tracks: tracks, action: "both"}));
-  $trackItem.on('click', 'button', createRecommendation);
-
-  $insert.empty().append($trackItem);
 }
 
 function addNewPlist() {
