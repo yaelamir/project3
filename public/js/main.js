@@ -298,31 +298,28 @@ function renderRecommendations(recs) {
 
 //start playing song when clicking play button
 function playSong() {
-  var $audio  = $('#audio-player');
   var playUri = $(this).closest('div').attr('data-track-src');
   track = new Audio(playUri);
   track.volume = 1;
-  console.log('Playing track:', track, track.duration);
+  console.log('Playing track:', track);
   track.play();
+  track.addEventListener('ended', function(track) {
+        track.src = "new url";
+        track.pause();
+        track.load();
+        track.play();
+    });
   track.addEventListener('canplaythrough', function(evt) {
-    console.log(evt.target);
+    console.log('evt.target', evt.target);
     console.log('duration:', track.duration);
     $('#total-time').text(secsToMin(track.duration));
     track.addEventListener('timeupdate', function() {
-      $('#time-left').text(secsToMin(track.currentTime));
-    })
-    // var currentSongTime = track.currentTime.change(secsToMin(track.currentTime));
-    // var time = $('#time-left').attr('max', currentSongTime);
-    // console.log(time);
-  })
 
-  // $audio.prepend(`<source src="${playUri}" type="audio/mpeg" />`);
-  // , function() {
-  //     $('#time-left').text()
-  //   });
-  // $audio[0].load(); // suspends and restores all audio element
-  // $audio[0].pause();
-  // $audio[0].play();
+      //checks
+      $('#time-left').text(secsToMin(track.currentTime));
+      $('#duration').val(track.currentTime/track.duration*100);
+    })
+  })
 }
 
 //converts seconds in floats to time
@@ -337,8 +334,6 @@ function secsToMin (seconds) {
   return mm + ":" + ss;
 }
 
-
-
  $('button.song-stream').on('click', playSong);
 
 //toggle play and pause button
@@ -348,7 +343,7 @@ function secsToMin (seconds) {
     track.pause();
     $('#play').text('play_arrow');
   } else if (track.paused === true) {
-    console.log('song paused');
+    console.log('song playing');
     $('#play').text('pause');
     track.play();
   }
@@ -387,8 +382,11 @@ function secsToMin (seconds) {
  //        $("#duration").attr("max", track.duration);
  //    });
 
- // duration
+//range bar change according to current time of song
 
+        //showVal
+        // track.currentTime = $(this).val();
+        // $("#duration").attr("max", track.duration);
 
 
  // $('#prev').on('click', );
