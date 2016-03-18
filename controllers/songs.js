@@ -43,7 +43,7 @@ function addRecommendation(req, res, next) {
               if (err) {
                 res.json({error: "oh no rec existed but couldnt do the thing! not saved", success: null})
               } else {
-                res.json({error: null, success: "recommendations saved!"})
+                res.json({error: null, success: "recommendations saved!", recSong: recSong.track_id})
               }
             })
           }
@@ -83,29 +83,34 @@ function addRecommendation(req, res, next) {
 function fetchRecommendation(req, res, next){
   // Find the current song
   var track_id = req.params.track_id;
-  Song.findOne({track_id: track_id}, function(err, song){
-    console.log("Pare, this is your CURRENT song: ", song);
-    if (err) console.log(err);
-    // If the song exists, find the recommended song
-    if (song) {
-      console.log("\nRECCSSSSS: ", song.recommendations)
-      if (song.recommendations.length <= 0) song.recommendations = null;
-      res.json({recommendations: song.recommendations});
-      // Song.findOne({track_id: req.body.recTrack.track_id}, function(error, recSong){
-      //   console.log("Pare, this is your RECOMMENDED song: ", recSong);
-      //   // If it IS the recommended song...
-      //   if (err) console.log(err);
-      //   if (recSong){
-      //     recSong.forEach(function(rec){
-      //       recSong1 = req.body.recTrack.track_id;
-      //       res.json({recSong1});
-      //       console.log(recSong1);
-      //     })
-      //   }
-      // })
+  Song.findOne({track_id: track_id})
+      .populate('recommendations.song')
+      .exec(function(err, recs) {
+        if (err) console.log(err);
+        if (recs) res.json(recs);
+         else res.json([]);
+      })
     }
-  })
-}
+  //     console.log("\nRECCSSSSS: ", song.recommendations)
+  //     if (song.recommendations.length <= 0) song.recommendations = null;
+  //     res.json({recommendations: song.recommendations});
+  //   } else {
+  //     res.json([])
+  //   }
+  // })
+
+//   Song
+//     .findOne({track_id:track_id})
+//     .populate("recommendations")
+//     .exec(function(err, recs) {
+//       if(err) {
+//         res.send(err);
+//       } else {
+//         console.log("heres your shit hopefully...", recs)
+//         res.json(recs)
+//       }
+//     })
+// }
 
 //============================================================
 
@@ -116,21 +121,21 @@ function addRecommendationToCurrSong(currSong, recSong, user, res) {
     if (err) {
       res.json({error: "oh no! not saved", success: null})
     } else {
-      res.json({error: null, success: "new song, new recommendations saved with new song in db!"})
+      res.json({error: null, success: "new song, new recommendations saved with new song in db!", recSong: recSong.track_id})
     }
   });
 }
 
 function upvoteRecommendation(recSong) {
-  recSong.upvotes += 1;
+  recSong[0].upvotes += 1;
 };
 
 function addRecommenderToUpvoteeList(user, recSong) {
-  var foundRecperson = recSong.upvotee.filter(function (recpersoninquestion) {
+  var foundRecperson = recSong[0].upvotee.filter(function (recpersoninquestion) {
     return recpersoninquestion.toString() === user;
   });
   if (foundRecperson.length === 0) {
-    recSong.upvotee.push(user);
+    recSong[0].upvotee.push(user);
   }
 }
 
