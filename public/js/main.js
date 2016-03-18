@@ -22,6 +22,7 @@ $(function() {
   $dashboard     = $("#dashboard");
   $playboard     = $("#playboard");
   $mainboard     = $("#mainboard");
+  $newPlForm    = $("#new-pl-form");
 
   // Compile templates
   renderTrack = _.template(`
@@ -67,7 +68,7 @@ $(function() {
 renderPlist = _.template(`
   <% user.playlists.forEach(function(pl) { %>
     <li>
-      <div data-pl="<%= pl.id %>" class="collapsible-header" style="color: black;"">
+      <div data-pl="<%= pl._id %>" class="collapsible-header plhead" style="color: black;"">
         <%= pl.title %>
         <i data-target="editplmodal" class="material-icons modal-trigger right">mode_edit</i>
       </div>
@@ -99,7 +100,6 @@ renderAddPLSong = _.template(`
 `)
 
 renderMainSongDiv = _.template(`
-
     <div class="col album-art">
       <img class="z-depth-3 circle" src="<%= song.image %>">
     </div>
@@ -113,9 +113,12 @@ renderMainSongDiv = _.template(`
 
   // Add event handlers to page.
   $searchForm.on('submit', showTracks);
+  $newPlForm.on('submit', addNewPlist);
   $('#playboard').on('click', '.play-playlist-song', playSong);
-  $('#playboard').on('click', '#add-new-pl', addNewPlist);
-  // $('#playboard').on('click', 'i', editPlaylist);
+  $('#playboard').on('click', '#add-new-pl', openNewPlModal);
+  $('#playboard').on('click', 'i', editPlaylist);
+  $('#playboard').on('click', 'i', getPlInfo);
+
 
   loadPlaylists();
 });
@@ -228,7 +231,7 @@ function loadPlaylists() {
   .then(
     function(curUser) {
       currentUser = curUser;
-      console.log(curUser);
+      // console.log(curUser);
       return curUser;
     },
     function(err) {
@@ -238,18 +241,25 @@ function loadPlaylists() {
   .then(renderPlists);
 }
 
+function openNewPlModal() {
+  $('#newplmodal').openModal();
+}
+
 function addNewPlist() {
-  var title = window.prompt("Enter Playlist Name");
   $.ajax({
     method: 'POST',
     url: "/playlists",
-    data: { title: title }
+    data: { title: $('input#new-pl-title').val() }
   })
   .then(
     function(pl) {
       currentUser.playlists.push(pl);
       renderPlists(currentUser);
     });
+}
+
+function editPlaylist() {
+  $('#editplmodal').openModal();
 }
 
 function editPlTit() {
@@ -277,7 +287,19 @@ function editPlTit() {
   $('#close-pl-btn').on('click', function() {
     $('#pl-title').show();
   });
+}
 
+function getPlInfo(evt) {
+  var thisPl = $(evt.target);
+  var plId = $(evt.target).closest('.plhead').data('pl');
+  console.log(plId);
+  // $.ajax({
+  //   method: "GET",
+  //   url:    "/users/me/" + plId,
+  //   success: function(playlist) {
+  //     console.log(playlist);
+  //   }
+  // });
 }
 
 // END OF PLAYLISTS
@@ -316,7 +338,7 @@ function renderTracks(tracks) {
 }
 
 function showSongInfo(evt) {
-  var thisSong = $(evt.target)
+  var thisSong = $(evt.target);
   var trackId = $(evt.target).data("track-id");
   console.log("Show recommendations for: ", trackId);
   var songInfo = {
