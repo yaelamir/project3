@@ -1,6 +1,6 @@
 console.log('JS loaded!');
 
-const URL_PREFIX = "https://localhost:3000";
+const URL_PREFIX = "https://mysterious-garden-27618.herokuapp.com/";
 
 var renderTrack,
     renderRecs,

@@ -69,7 +69,7 @@ $(function() {
 
 SC.initialize({
   client_id:    "f4ddb16cc5099de27575f7bcb846636c",
-  redirect_uri: "http://localhost:3000/auth/soundcloud/callback"
+  redirect_uri: "/auth/soundcloud/callback"
 });
 
 console.log("SoundCloud SDK initialized.");
