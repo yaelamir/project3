@@ -5,7 +5,7 @@ module.exports = {
   show:  show,
   showCurrentUser: showCurrentUser,
   addPlaylist: addPlaylist
-  // editPlaylist: editPlaylist
+  // editPlTitle: editPlTitle
 };
 
 
@@ -44,6 +44,8 @@ function addPlaylist(req, res) {
   });
 }
 
-// function editPlaylist(req, res) {
-//   req.user.playlists{}
+// function editPlTitle(req, res) {
+//     var pl = req.user.playlists.title;
+//     console.log(pl);
+//     res.json(pl);
 // }
