@@ -44,6 +44,7 @@ function addPlaylist(req, res) {
   });
 }
 
+
 // function editPlTitle(req, res) {
 //     var pl = req.user.playlists.title;
 //     console.log(pl);
