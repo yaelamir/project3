@@ -23,7 +23,7 @@ Crowdsourced recommendations from people with relevant music knowledge will prod
 ##Roles
 **Myung Gochu-Nemsenah Kim**: Project Manager and Creative Director
 
-**Yael Chamji-Nemsenah Amir**: Git Master
+**Yael Amir**: Git Master
 
 **Jui-Young Chen**: Documentation Manager
 
