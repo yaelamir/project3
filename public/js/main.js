@@ -1,11 +1,28 @@
 console.log('JS loaded!');
 
+
 const URL_PREFIX = "https://mysterious-garden-27618.herokuapp.com/";
+// const URL_PREFIX = "https://localhost:3000";
+/*
+ * SoundCloud API HELPER FUNCTIONS =====================================
+ */
+
+console.log("SoundCloud SDK initialized.");
+
+function getTracks(query) {
+  return SC.get('/tracks', { q: query });
+}
+
+/*
+ * =====================================================================
+ */
+
 
 var renderTrack,
     renderRecs,
     renderPlist,
     renderAddPLSong,
+    renderMainSongDiv,
     currentUser,
     $searchValue,
     $searchForm,
@@ -29,12 +46,12 @@ $(function() {
     <% tracks.forEach(function(track) { %>
       <div class="song-total" data-track-src="<%= track.stream_url %>?client_id=<%=clientId%>">
         <% if (action === "play") { %>
-        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" data-image-src="<%= track.user.avatar_url %>" class="song-stream">Play</button>
+        <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">play_arrow</i>
         <% } else if (action === "both") { %>
-        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" data-image-src="<%= track.user.avatar_url %>" class="song-stream">Play</button>
-        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" data-image-src="<%= track.user.avatar_url %>" class="song-stream">+</button>
+        <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">play_arrow</i>
+        <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">queue</i>
         <% } else { %>
-        <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" data-image-src="<%= track.user.avatar_url %>" class="song-stream">+</button>
+        <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">queue</i>
         <% } %>
         <% if (track.artwork_url) { %>
           <img class="pic song-image" src="<%= track.artwork_url %>" style="max-width: 20px;">
@@ -45,22 +62,20 @@ $(function() {
           <%= track.title %>
       </div>
     <% }); %>
-    <button id="add-rec-btn" class="create-rec">RECOMMEND A SONG</button>
-    <form id="search-rec" class="search-rec-form hidden">
-      <input type="text" id="search-rec-value" placeholder="Search">
-    </form>
     <section id="recs-container">
     </section>
   `);
 
   renderRecs = _.template(`
-    <div class="col m4 rec">
-      <ul class=" z-depth-3 collection found-recs hidden">
+    <i id="add-rec-btn" class="col s12 create-rec">RECOMMEND A SONG</i>
+    <div class="col s12 rec z-depth-3">
+      <% if (recs) { %>
       <% recs.forEach(function(rec) { %>
-        <li class="collection-item transparent avatar"> RECOMMENDATION <img class="circle" src=""> <span class="title">Title</span></li>
-        <div>RECSSSSS<%= rec.song %> <%= rec.upvotes %> </div>
+        <div class="collection-item transparent avatar"></div>
+        <div><%= rec.song.title %>    |    <%= rec.song.artist %>   |    <strong><%= rec.upvotes %></strong> <i data-track-src="https://api.soundcloud.com/tracks/<%= rec.song.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c" data-track-id="<%= rec.song.track_id %>"  data-title="<%= rec.song.title %>" data-artist="<%= rec.song.artist %>" data-duration="<%= rec.song.length %>" class="song-stream-rec material-icons">play_arrow</i>
+        <i data-track-id="<%= rec.song.track_id %>" data-sc-id="<%= rec.song.track_id %>data-title="<%= rec.song.title %>" data-artist="<%= rec.song.artist %>" data-duration="<%= rec.song.length %>" class="song-upvote material-icons">queue</i></div>
       <% }); %>
-      </ul>
+      <% } %>
     </div>`
   );
 
@@ -75,7 +90,7 @@ renderPlist = _.template(`
       <% if (pl.songs.length > 0) { %>
         <% pl.songs.forEach(function(s) { %>
           <div class="collapsible-body" data-track-src="https://api.soundcloud.com/tracks/<%= s.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c">
-            <button data-track-id="<%= s.track_id %>" class="play-playlist-song">&#9654;</button>
+            <i data-track-id="<%= s.track_id %>" class="play-playlist-song">&#9654;</i>
             <%= s.artist %> - <%= s.title %>
           </div>
         <% }); %>
@@ -85,7 +100,7 @@ renderPlist = _.template(`
     </li>
   <% }); %>
   <div class="collapsible-header">
-    <button id="add-new-pl">Create New Playlist</button>
+    <i id="add-new-pl">Create New Playlist</i>
   </div>
 `)
 
@@ -99,9 +114,10 @@ renderAddPLSong = _.template(`
   </div>
 `)
 
+
 renderMainSongDiv = _.template(`
     <div class="col album-art">
-      <img class="z-depth-3 circle" src="<%= song.image %>">
+      <img data-track-id=" <%= song.trackId %>" class="z-depth-3 circle" src="<%= song.image %>">
     </div>
     <div class="center-align artist-title">
       <span><%= song.title %><br>
@@ -120,11 +136,13 @@ renderMainSongDiv = _.template(`
   $('#playboard').on('click', 'i', getPlInfo);
 
 
+
   loadPlaylists();
 });
 
+
 /*
- * SoundCloud API HELPER FUNCTIONS =====================================
+ * AJAX vurs API FUNCTIONS =============================================
  */
 
 SC.initialize({
@@ -132,30 +150,136 @@ SC.initialize({
   redirect_uri: "http://" + hostname + "/auth/soundcloud/callback"
 });
 
-console.log("SoundCloud SDK initialized.");
+ function showTracks(evt) {
+  evt.preventDefault();
+  getTracks($searchValue.val())
+    .then(function(tracks) {
+      console.log("Tracks:", tracks);
+      renderTracks(tracks);
+      $('#modal1').openModal();
+      $('.search-rec-form').hide();
 
-function getTracks(query) {
-  return SC.get('/tracks', { q: query });
+      // $('#add-rec-btn').on("click", function() {
+      //   $('.search-rec-form, .found-recs').toggleClass('hidden');
+      //   $('#modal1').openModal();
+      //   // $searchResults.hide();;
+    });
 }
 
-/*
- * AJAX vurs API FUNCTIONS =============================================
- */
+function renderPossibleRecs($insertion, tracks) {
+  // Render the HTML.
+  var $trackItem = $(renderTrack({tracks: tracks, action: "add", modal: "recs"}));
+
+  // Add listeners to the effected HTML.
+  // $trackItem.on('click', 'i', playSong);
+  $trackItem.on('click', 'i', createRecommendation);
+
+  // Clear search results and append new ones to page.
+  $insertion.find('i').not($('[data-track-id=' + $('#mainboard div img').data('track-id') + ']')).closest('div').remove()
+  $insertion.append($trackItem);
+}
+
+function renderTracks(tracks) {
+  // Render the HTML.
+  var $trackItem = $(renderTrack({tracks: tracks, action: "play", modal: "search"}));
+  // Add listeners to the effected HTML.
+  $trackItem.on('click', 'i', playSong);
+  $trackItem.on('click', 'i', showSongInfo);
+
+  // Clear search results and append new ones to page.
+  $searchResults.empty().append($trackItem);
+  $('#modal-title').empty().append("<h4>Search Results</h4>");
+}
+
+function showSongInfo(evt) {
+  var thisSong = $(evt.target)
+  var trackId = $(evt.target).data("track-id");
+  console.log("Show recommendations for: ", trackId);
+  var songInfo = {
+    trackId: thisSong.data("track-id"),
+    title: thisSong.data("title"),
+    artist: thisSong.data("artist"),
+    duration: thisSong.data("duration"),
+    image: thisSong.data("image-src").replace("large.jpg", "t500x500.jpg")
+  };
+  console.log("here's your main song: ", songInfo)
+  renderMainTrack(songInfo)
+
+  $('#modal1').closeModal();
+  fetchRecommendations(trackId);
+}
+
+function renderMainTrack(song) {
+  var renderedSong = renderMainSongDiv({song: song});
+  console.log("here's the rendered song: ", renderedSong);
+  var $renderedSong = $(renderedSong);
+  console.log("here's the jquery selected version: ", $renderedSong)
+
+  $mainboard.empty().append($renderedSong)
+}
+
 
 function fetchRecommendations(trackId) {
-  // TODO: Implement fetch recommendations...
   console.log('fetch', trackId)
+  var x;
   $.ajax({
     type: 'GET',
     url: '/api/recs/' + trackId,
   }).then(function(results){
-    console.log('fetched results', results)
-    return results;
+    console.log('fetched results', results, results.recommendations);
+    renderRecommendations(results.recommendations);
   }).fail(function(error){
-    console.log(error)
+    console.log("juke", error)
   })
+    // return new Promise(function(resolve) {
+    //   console.log("FUUUUUCK");
+    //   resolve(x);
+    // })
+}
 
-  return new Promise(function(resolve) { resolve([results]); })
+function renderRecommendations(recs) {
+  console.log("were in renderrecs!", recs);
+  // Render the HTML.
+  var recsHTML = renderRecs({recs: recs});
+  console.log("were doing recshtml var: ", recsHTML);
+  // Add listeners to the effected HTML.
+  var $recsHTML = $(recsHTML);
+  console.log("jquery select that bad boy...", $recsHTML)
+  var $recsSearchVal = $recsHTML.find("#search-rec-value");
+  console.log("YO i, ", $('#add-rec-btn'))
+
+
+  $recsHTML.find('.search-rec-form').on("submit", function(evt) {
+    evt.preventDefault();
+    getTracks($recsSearchVal.val()).then(function(tracks) {
+      console.log("Rec tracks:", tracks);
+
+      $dashboard.append($recsHTML);
+    });
+  });
+
+  // Append recs to page.
+  $dashboard.find('.rec:last').remove();
+  $dashboard.empty().append($recsHTML);
+
+   $('#add-rec-btn').on("click", function() {
+        $('.search-rec-form').show();
+        $('#modal1').openModal();
+          $('#modal-title').empty().append("<h4>Search a Recommendation</h4>");
+
+        // $searchResults.hide();
+      });
+   $('i.song-stream-rec').on('click', playSong);
+   $('i.song-upvote').on('click', createRecommendation);
+
+   $('.search-rec-form').on("submit", function(evt) {
+        evt.preventDefault();
+        getTracks($('#search-rec-value').val()).then(function(tracks) {
+          renderPossibleRecs($searchResults, tracks)
+          $('#modal-title').empty().append("<h4>Search a Recommendation</h4>");
+
+        });
+      })
 }
 
 function createRecommendation(recommendationTrackId) {
@@ -172,7 +296,7 @@ function createRecommendation(recommendationTrackId) {
       currentTrackId = str;
     }
   })
-  var currentTrackInfo = $("button[data-track-id=" + currentTrackId + "]");
+  var currentTrackInfo = $("i[data-track-id=" + currentTrackId + "]");
   var currentTrackDataset = currentTrackInfo[0].dataset;
   // TODO: implement!
   console.log("IMPLEMENT ME", recommendationTrackId, "\nCURR: ", currentTrackDataset);
@@ -197,6 +321,7 @@ function createRecommendation(recommendationTrackId) {
     data: data
   }).then(function(result){
     console.log(result)
+    fetchRecommendations(currentTrackId);
   }).fail(function(error){
     console.log(error)
   })
@@ -256,6 +381,7 @@ function addNewPlist() {
       currentUser.playlists.push(pl);
       renderPlists(currentUser);
     });
+  $('#newplmodal').closeModal();
 }
 
 function editPlaylist() {
@@ -304,110 +430,6 @@ function getPlInfo(evt) {
 
 // END OF PLAYLISTS
 
-function showTracks(evt) {
-  evt.preventDefault();
-
-  getTracks($searchValue.val())
-    .then(function(tracks) {
-      console.log("Tracks:", tracks);
-      renderTracks(tracks);
-            $('#modal1').openModal();
-
-      $('#add-rec-btn').on("click", function() {
-        $('.search-rec-form, .found-recs').toggleClass('hidden');
-        // $searchResults.hide();
-      });
-      $('.search-rec-form').on("submit", function(evt) {
-        evt.preventDefault();
-        getTracks($('#search-rec-value').val()).then(function(tracks) {
-          renderPossibleRecs($addSearch.find(".found-songs"), tracks);
-        });
-      });
-    });
-}
-
-function renderTracks(tracks) {
-  // Render the HTML.
-  var $trackItem = $(renderTrack({tracks: tracks, action: "play", clientId: clientId}));
-  // Add listeners to the effected HTML.
-  $trackItem.on('click', 'button', playSong);
-  $trackItem.on('click', 'button', showSongInfo);
-
-  // Clear search results and append new ones to page.
-  $searchResults.empty().append($trackItem);
-}
-
-function showSongInfo(evt) {
-  var thisSong = $(evt.target);
-  var trackId = $(evt.target).data("track-id");
-  console.log("Show recommendations for: ", trackId);
-  var songInfo = {
-    trackId: thisSong.data("track-id"),
-    title: thisSong.data("title"),
-    artist: thisSong.data("artist"),
-    duration: thisSong.data("duration"),
-    image: thisSong.data("image-src").replace("large.jpg", "t500x500.jpg")
-  };
-  console.log("here's your main song: ", songInfo)
-  renderMainTrack(songInfo)
-  $('#modal1').closeModal();
-  fetchRecommendations(trackId)
-    .then(function(recommendations) {
-      // render the recommendations to the screen
-      renderRecommendations(recommendations);
-    });
-}
-
-function renderMainTrack(song) {
-  var renderedSong = renderMainSongDiv({song: song});
-  console.log("here's the rendered song: ", renderedSong);
-  var $renderedSong = $(renderedSong);
-  console.log("here's the jquery selected version: ", $renderedSong)
-
-  $mainboard.empty().append($renderedSong)
-}
-
-function renderRecommendations(recs) {
-  console.log(recs);
-
-  // Render the HTML.
-  var recsHTML = renderRecs({recs: recs});
-
-  // Add listeners to the effected HTML.
-  var $recsHTML = $(recsHTML);
-  var $recsSearchVal = $recsHTML.find("#search-rec-value");
-
-
-  $recsHTML.find('.search-rec-form').on("submit", function(evt) {
-    evt.preventDefault();
-    getTracks($recsSearchVal.val()).then(function(tracks) {
-      console.log("Rec tracks:", tracks);
-
-
-      // need to render possible recs into <section id="recs-container"> ?
-
-      // renderPossibleRecs($recsHTML.find(".found-recs"), tracks);
-    });
-  });
-
-  // Append recs to page.
-  $dashboard.find('.rec:last').remove();
-  $dashboard.append($recsHTML);
-}
-
-function renderPossibleRecs($insertion, tracks) {
-  // Render the HTML.
-  var $trackItem = $(renderTrack({tracks: tracks, action: "add"}));
-
-  // Add listeners to the effected HTML.
-  // $trackItem.on('click', 'button', playSong);
-  $trackItem.on('click', 'button', createRecommendation);
-
-  // Clear search results and append new ones to page.
-  $insertion.empty().append($trackItem);
-}
-
-
 /*
  * MUSIC PLAYER ===================================================
  */
@@ -418,12 +440,13 @@ var track = new Audio();
 var prevSongsPlayed = [];
 var nextSongsPlayed = [];
 
-//start playing song when clicking play button
+//start playing song when clicking play i
+
 function playSong(prev) {
   if (typeof prev === 'string') {
     track.src = prev;
   } else {
-    track.src = $(this).closest('div').attr('data-track-src');
+    track.src = $(this).closest('div').attr('data-track-src') ? $(this).closest('div').attr('data-track-src') : $(this).closest('i').attr('data-track-src');
     prevSongsPlayed.push(track.src);
   }
 
@@ -431,12 +454,6 @@ function playSong(prev) {
   track.volume = 1;
   console.log('Playing track:', track);
   track.play();
-  // track.addEventListener('ended', function(track) {
-  //       track.src = "new url";
-  //       track.pause();
-  //       track.load();
-  //       track.play();
-  //   });
   track.addEventListener('canplaythrough', function(evt) {
     console.log('evt.target', evt.target);
     console.log('duration:', track.duration);
@@ -461,9 +478,9 @@ function secsToMin (seconds) {
   return mm + ":" + ss;
 }
 
- $('button.song-stream').on('click', playSong);
+ $('i.song-stream').on('click', playSong);
 
-//toggle play and pause button
+//toggle play and pause i
  $('#play').on('click', function() {
   if (track.paused === false) {
     console.log('song paused');
