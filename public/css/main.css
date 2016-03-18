@@ -147,7 +147,9 @@ input span {
   display:none;
 }
 
-
+.col {
+  cursor: default;
+}
 
 
 

@@ -60,8 +60,8 @@ $(function() {
         <div>RECSSSSS<%= rec.song %> <%= rec.upvotes %> </div>
       <% }); %>
       </ul>
-    </div>`
-  );
+    </div>
+    `);
 
   // PLAYLISTS
 
@@ -371,7 +371,9 @@ var track = new Audio();
 var prevSongsPlayed = [];
 var nextSongsPlayed = [];
 
-//start playing song when clicking play button
+//plays song triggers playSong function
+$('button.song-stream').on('click', playSong);
+//start playing song when click play button
 function playSong(prev) {
   if (typeof prev === 'string') {
     track.src = prev;
@@ -380,29 +382,23 @@ function playSong(prev) {
     prevSongsPlayed.push(track.src);
   }
 
-  // track = new Audio(playUri);
   track.volume = 1;
-  console.log('Playing track:', track);
   track.play();
-  // track.addEventListener('ended', function(track) {
-  //       track.src = "new url";
-  //       track.pause();
-  //       track.load();
-  //       track.play();
-  //   });
+  console.log('Playing track:', track);
   track.addEventListener('canplaythrough', function(evt) {
     console.log('evt.target', evt.target);
     console.log('duration:', track.duration);
+    //displays total time of current song playing
     $('#total-time').text(secsToMin(track.duration));
     track.addEventListener('timeupdate', function() {
       $('#time-left').text(secsToMin(track.currentTime));
-      //
+      //changes media bar to reflect current time of song playing
       $('#duration').val(track.currentTime / track.duration * 100);
     })
   })
 }
 
-//converts seconds in float to time
+//function to convert seconds to time
 function secsToMin (seconds) {
   var mm = Math.floor(seconds / 60);
   var ss = seconds % 60;
@@ -414,9 +410,7 @@ function secsToMin (seconds) {
   return mm + ":" + ss;
 }
 
- $('button.song-stream').on('click', playSong);
-
-//toggle play and pause button
+//toggle play and pause button on click
  $('#play').on('click', function() {
   if (track.paused === false) {
     console.log('song paused');
@@ -429,6 +423,8 @@ function secsToMin (seconds) {
   }
 });
 
+//previous button - stores path of played songs
+//and plays each previous song on click
 $('#prev').on('click', function() {
   var song = prevSongsPlayed.pop();
   if (song) {
@@ -437,6 +433,8 @@ $('#prev').on('click', function() {
   }
 });
 
+//next button - plays stored path of previously
+//played songs and skips through them on click
 $('#next').on('click', function() {
   var song = nextSongsPlayed.pop();
   if (song) {
@@ -445,56 +443,27 @@ $('#next').on('click', function() {
   }
 });
 
-
-
+//toggle volume icon when muted or not on click
 var volume = 1;
-//toggle volume when muted or not
- $('#volume').on('click', function() {
-  if (volume === 1) {
-    track.muted = true;
-    volume = 0;
-    $("#volume").text('volume_off');
-    console.log('volume off');
-  } else if (volume === 0) {
-    track.muted = false;
-    volume = 1;
-    $("#volume").text('volume_up');
-    console.log('volume on');
-  // } else {
-  //   (volume === false)
-  //   track.muted = true;
-  //   $("#volume").text('volume_up');
-  //   console.log('volume on');
-  }
-  });
+$('#volume').on('click', function() {
+ if (volume === 1) {
+   track.muted = true;
+   volume = 0;
+   $("#volume").text('volume_off');
+   console.log('volume off');
+ } else if (volume === 0) {
+   track.muted = false;
+   volume = 1;
+   $("#volume").text('volume_up');
+   console.log('volume on');
+ }
+});
 
- //time remaining for song and duration
-  $('#time-left').on('change', function() {
-    console.log(track.currentTime);
-    $('#time-left').attr(track.currentTime);
-  })
-
- // $("#duration").on("change", function() {
- //        track.currentTime = $(this).val();
- //        $("#duration").attr("max", track.duration);
- //    });
-
-//range bar change according to current time of song
-
-        //showVal
-        // track.currentTime = $(this).val();
-        // $("#duration").attr("max", track.duration);
-
-
- // $('#prev').on('click', );
- // $('#next').on('click', );
- // $('#fav').on('click', );
-
-// var playUri = $(this).parent().data('track-src');
-// var songs = new Audio();
-//   $('#play').on('click', function() {
-//   })
-
+//time elapsed for currently playing song
+$('#time-left').on('change', function() {
+  console.log(track.currentTime);
+  $('#time-left').attr(track.currentTime);
+})
 
 
 
