@@ -26,7 +26,7 @@ $(function() {
   // Compile templates
   renderTrack = _.template(`
     <% tracks.forEach(function(track) { %>
-      <div class="song-total" data-track-src="<%= track.stream_url %>?client_id=f4ddb16cc5099de27575f7bcb846636c">
+      <div class="song-total" data-track-src="<%= track.stream_url %>?client_id=<%=clientId%>">
         <% if (action === "play") { %>
         <button data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.permalink %>" data-duration="<%= track.duration %>" data-image-src="<%= track.user.avatar_url %>" class="song-stream">Play</button>
         <% } else if (action === "both") { %>
@@ -121,8 +121,8 @@ renderMainSongDiv = _.template(`
  */
 
 SC.initialize({
-  client_id:    "f4ddb16cc5099de27575f7bcb846636c",
-  redirect_uri: "http://localhost:3000/auth/soundcloud/callback"
+  client_id:  clientId,
+  redirect_uri: "http://" + hostname + "/auth/soundcloud/callback"
 });
 
 console.log("SoundCloud SDK initialized.");
@@ -311,7 +311,7 @@ function showTracks(evt) {
 
 function renderTracks(tracks) {
   // Render the HTML.
-  var $trackItem = $(renderTrack({tracks: tracks, action: "play"}));
+  var $trackItem = $(renderTrack({tracks: tracks, action: "play", clientId: clientId}));
   // Add listeners to the effected HTML.
   $trackItem.on('click', 'button', playSong);
   $trackItem.on('click', 'button', showSongInfo);
