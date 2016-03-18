@@ -57,7 +57,7 @@ app.use(passport.session()); // Can be removed if we don't need persisted logins
 // Routing layers: favicon, static assets, dynamic routes, or 404…
 
 // Routes to static assets. Uncomment below if you have a favicon.
-// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Useful for debugging the state of requests.
