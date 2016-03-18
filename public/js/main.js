@@ -145,11 +145,6 @@ SC.initialize({
       renderTracks(tracks);
       $('#modal1').openModal();
       $('.search-rec-form').hide();
-
-      // $('#add-rec-btn').on("click", function() {
-      //   $('.search-rec-form, .found-recs').toggleClass('hidden');
-      //   $('#modal1').openModal();
-      //   // $searchResults.hide();;
     });
 }
 
