@@ -18,16 +18,12 @@ function show(req, res, next) {
 };
 
 function addRecommendation(req, res, next) {
-  console.log("Hey: ", req.body);
-  console.log("Hey req.params: ", req.params)
   //Find the currently playing song
   Song.findOne({track_id: req.body.currentTrack.track_id}, function(error, song){
-    console.log("Hey again: ", song);
     //If song exists in the db.
     if (song) {
       //Find the recommended song in the database
       Song.findOne({track_id: req.body.recTrack.track_id}, function(err, recSong){
-        console.log("Hello recSong: ", recSong);
         //If that recommended song exists,
         if (recSong) {
 
@@ -39,7 +35,6 @@ function addRecommendation(req, res, next) {
             addRecommenderToUpvoteeList(req.body.user, foundRec);
 
             song.save(function(err){
-              console.log("errr: ", err)
               if (err) {
                 res.json({error: "oh no rec existed but couldnt do the thing! not saved", success: null})
               } else {
@@ -60,7 +55,6 @@ function addRecommendation(req, res, next) {
       Song.create(req.body.currentTrack, function(err, neworiginsong){
         if (err) console.log(err);
         Song.findOne({track_id: req.body.recTrack.track_id}, function(err, recSong){
-          console.log("Hello recSong: ", recSong);
 
           if (recSong) {
             addRecommendationToCurrSong(neworiginsong, recSong, req.body.user, res);
@@ -91,27 +85,6 @@ function fetchRecommendation(req, res, next){
          else res.json([]);
       })
     }
-  //     console.log("\nRECCSSSSS: ", song.recommendations)
-  //     if (song.recommendations.length <= 0) song.recommendations = null;
-  //     res.json({recommendations: song.recommendations});
-  //   } else {
-  //     res.json([])
-  //   }
-  // })
-
-//   Song
-//     .findOne({track_id:track_id})
-//     .populate("recommendations")
-//     .exec(function(err, recs) {
-//       if(err) {
-//         res.send(err);
-//       } else {
-//         console.log("heres your shit hopefully...", recs)
-//         res.json(recs)
-//       }
-//     })
-// }
-
 //============================================================
 
 function addRecommendationToCurrSong(currSong, recSong, user, res) {

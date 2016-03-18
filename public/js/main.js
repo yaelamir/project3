@@ -41,17 +41,16 @@ $(function() {
   $mainboard     = $("#mainboard");
   $newPlForm    = $("#new-pl-form");
 
-  // Compile templates
+/* Compile templates
+ *======================================================================
+ */
   renderTrack = _.template(`
     <% tracks.forEach(function(track) { %>
       <div class="song-total" data-track-src="<%= track.stream_url %>?client_id=<%=clientId%>">
         <% if (action === "play") { %>
-        <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">play_arrow</i>
-        <% } else if (action === "both") { %>
-        <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">play_arrow</i>
-        <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">queue</i>
+          <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">play_arrow</i>
         <% } else { %>
-        <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">queue</i>
+          <i data-track-id="<%= track.id %>" data-title="<%= track.title %>" data-artist="<%= track.user.username %>" data-duration="<%= track.duration %>" data-image-src="<%= track.artwork_url %>" class="song-stream material-icons">queue</i>
         <% } %>
         <% if (track.artwork_url) { %>
           <img class="pic song-image" src="<%= track.artwork_url %>" style="max-width: 20px;">
@@ -62,19 +61,17 @@ $(function() {
           <%= track.title %>
       </div>
     <% }); %>
-    <section id="recs-container">
-    </section>
   `);
 
   renderRecs = _.template(`
     <i id="add-rec-btn" class="col s12 create-rec">RECOMMEND A SONG</i>
     <div class="col s12 rec z-depth-3">
       <% if (recs) { %>
-      <% recs.forEach(function(rec) { %>
-        <div class="collection-item transparent avatar"></div>
-        <div><%= rec.song.title %>    |    <%= rec.song.artist %>   |    <strong><%= rec.upvotes %></strong> <i data-track-src="https://api.soundcloud.com/tracks/<%= rec.song.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c" data-track-id="<%= rec.song.track_id %>"  data-title="<%= rec.song.title %>" data-artist="<%= rec.song.artist %>" data-duration="<%= rec.song.length %>" class="song-stream-rec material-icons">play_arrow</i>
-        <i data-track-id="<%= rec.song.track_id %>" data-sc-id="<%= rec.song.track_id %>data-title="<%= rec.song.title %>" data-artist="<%= rec.song.artist %>" data-duration="<%= rec.song.length %>" class="song-upvote material-icons">queue</i></div>
-      <% }); %>
+        <% recs.forEach(function(rec) { %>
+          <div class="collection-item transparent avatar"></div>
+          <div><%= rec.song.title %>    |    <%= rec.song.artist %>   |    <strong><%= rec.upvotes %></strong> <i data-track-src="https://api.soundcloud.com/tracks/<%= rec.song.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c" data-track-id="<%= rec.song.track_id %>"  data-title="<%= rec.song.title %>" data-artist="<%= rec.song.artist %>" data-duration="<%= rec.song.length %>" class="song-stream-rec material-icons">play_arrow</i>
+          <i data-track-id="<%= rec.song.track_id %>" data-sc-id="<%= rec.song.track_id %>data-title="<%= rec.song.title %>" data-artist="<%= rec.song.artist %>" data-duration="<%= rec.song.length %>" class="song-upvote material-icons">queue</i></div>
+        <% }); %>
       <% } %>
     </div>`
   );
@@ -83,7 +80,7 @@ $(function() {
 renderPlist = _.template(`
   <% user.playlists.forEach(function(pl) { %>
     <li>
-      <div data-pl="<%= pl._id %>" class="collapsible-header plhead" style="color: black;"">
+      <div data-pl="<%= pl._id %>" class="collapsible-header plhead">
         <%= pl.title %>
         <i data-target="editplmodal" class="material-icons modal-trigger right">mode_edit</i>
       </div>
@@ -100,17 +97,7 @@ renderPlist = _.template(`
     </li>
   <% }); %>
   <div class="collapsible-header">
-    <i id="add-new-pl">Create New Playlist</i>
-  </div>
-`)
-
-renderAddPLSong = _.template(`
-  <div class="astp">
-    <form id="search-song" class="search-song-form hidden">
-      <input type="text" id="search-add-value">
-    </form>
-    <ul class="found-songs hidden">
-    </ul>
+    <button id="add-new-pl">Create New Playlist</button>
   </div>
 `)
 
@@ -194,7 +181,6 @@ function renderTracks(tracks) {
 function showSongInfo(evt) {
   var thisSong = $(evt.target)
   var trackId = $(evt.target).data("track-id");
-  console.log("Show recommendations for: ", trackId);
   var songInfo = {
     trackId: thisSong.data("track-id"),
     title: thisSong.data("title"),
@@ -202,7 +188,6 @@ function showSongInfo(evt) {
     duration: thisSong.data("duration"),
     image: thisSong.data("image-src").replace("large.jpg", "t500x500.jpg")
   };
-  console.log("here's your main song: ", songInfo)
   renderMainTrack(songInfo)
 
   $('#modal1').closeModal();
@@ -211,54 +196,35 @@ function showSongInfo(evt) {
 
 function renderMainTrack(song) {
   var renderedSong = renderMainSongDiv({song: song});
-  console.log("here's the rendered song: ", renderedSong);
   var $renderedSong = $(renderedSong);
-  console.log("here's the jquery selected version: ", $renderedSong)
-
   $mainboard.empty().append($renderedSong)
 }
 
 
 function fetchRecommendations(trackId) {
-  console.log('fetch', trackId)
   var x;
   $.ajax({
     type: 'GET',
     url: '/api/recs/' + trackId,
   }).then(function(results){
-    console.log('fetched results', results, results.recommendations);
     renderRecommendations(results.recommendations);
   }).fail(function(error){
-    console.log("juke", error)
   })
-    // return new Promise(function(resolve) {
-    //   console.log("FUUUUUCK");
-    //   resolve(x);
-    // })
 }
 
 function renderRecommendations(recs) {
-  console.log("were in renderrecs!", recs);
-  // Render the HTML.
   var recsHTML = renderRecs({recs: recs});
-  console.log("were doing recshtml var: ", recsHTML);
-  // Add listeners to the effected HTML.
   var $recsHTML = $(recsHTML);
-  console.log("jquery select that bad boy...", $recsHTML)
   var $recsSearchVal = $recsHTML.find("#search-rec-value");
-  console.log("YO i, ", $('#add-rec-btn'))
 
 
   $recsHTML.find('.search-rec-form').on("submit", function(evt) {
     evt.preventDefault();
     getTracks($recsSearchVal.val()).then(function(tracks) {
-      console.log("Rec tracks:", tracks);
-
       $dashboard.append($recsHTML);
     });
   });
 
-  // Append recs to page.
   $dashboard.find('.rec:last').remove();
   $dashboard.empty().append($recsHTML);
 
@@ -288,8 +254,6 @@ function createRecommendation(recommendationTrackId) {
       currentTrackTitle,
       currentTrackArtist,
       currentTrackDuration;
-      // console.log("TRACK SRC: ", track)
-  // var audioSrc = document.getElementById('audio-player').children[0].src.split('/')
   var audioSrc = track.src.split('/')
   audioSrc.forEach(function(str){
     if(/^\d+$/.test(str)){
@@ -298,8 +262,6 @@ function createRecommendation(recommendationTrackId) {
   })
   var currentTrackInfo = $("i[data-track-id=" + currentTrackId + "]");
   var currentTrackDataset = currentTrackInfo[0].dataset;
-  // TODO: implement!
-  console.log("IMPLEMENT ME", recommendationTrackId, "\nCURR: ", currentTrackDataset);
   var data = {
       recTrack: {
         title:    recommendationTrackId.title,
@@ -320,10 +282,8 @@ function createRecommendation(recommendationTrackId) {
     url: '/api/addrecs',
     data: data
   }).then(function(result){
-    console.log(result)
     fetchRecommendations(currentTrackId);
   }).fail(function(error){
-    console.log(error)
   })
 
 }
@@ -335,19 +295,6 @@ function renderPlists(user) {
 }
 
 
-function renderAddSearch(songs) {
-  var addSearch = renderAddPLSong({songs: songs});
-  var $addSearch = $(addSearch);
-
-  var $addSearchVal = $addSearch.find("#search-add-value");
-
-  $addSearch.find('.add-plsong').on("click", function() {
-    $addSearch.find('.search-song-form, .found-songs').toggleClass('hidden');
-  });
-
-  $playboard.append($addSearch);
-}
-
 function loadPlaylists() {
   $.ajax({
     method: "GET",
@@ -356,7 +303,6 @@ function loadPlaylists() {
   .then(
     function(curUser) {
       currentUser = curUser;
-      // console.log(curUser);
       return curUser;
     },
     function(err) {
@@ -419,16 +365,7 @@ function getPlInfo(evt) {
   var thisPl = $(evt.target);
   var plId = $(evt.target).closest('.plhead').data('pl');
   console.log(plId);
-  // $.ajax({
-  //   method: "GET",
-  //   url:    "/users/me/" + plId,
-  //   success: function(playlist) {
-  //     console.log(playlist);
-  //   }
-  // });
 }
-
-// END OF PLAYLISTS
 
 /*
  * MUSIC PLAYER ===================================================
@@ -452,15 +389,11 @@ function playSong(prev) {
 
   // track = new Audio(playUri);
   track.volume = 1;
-  console.log('Playing track:', track);
   track.play();
   track.addEventListener('canplaythrough', function(evt) {
-    console.log('evt.target', evt.target);
-    console.log('duration:', track.duration);
     $('#total-time').text(secsToMin(track.duration));
     track.addEventListener('timeupdate', function() {
       $('#time-left').text(secsToMin(track.currentTime));
-      //
       $('#duration').val(track.currentTime / track.duration * 100);
     })
   })
@@ -478,16 +411,12 @@ function secsToMin (seconds) {
   return mm + ":" + ss;
 }
 
- $('i.song-stream').on('click', playSong);
-
 //toggle play and pause i
  $('#play').on('click', function() {
   if (track.paused === false) {
-    console.log('song paused');
     track.pause();
     $('#play').text('play_arrow');
   } else if (track.paused === true) {
-    console.log('song playing');
     $('#play').text('pause');
     track.play();
   }
@@ -517,18 +446,15 @@ var volume = 1;
     track.muted = true;
     volume = 0;
     $("#volume").text('volume_off');
-    console.log('volume off');
   } else if (volume === 0) {
     track.muted = false;
     volume = 1;
     $("#volume").text('volume_up');
-    console.log('volume on');
   }
   });
 
  //time remaining for song and duration
   $('#time-left').on('change', function() {
-    console.log(track.currentTime);
     $('#time-left').attr(track.currentTime);
   })
 
