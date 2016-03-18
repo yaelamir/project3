@@ -63,30 +63,32 @@ $(function() {
     </div>`
   );
 
-  // PLAYLISTS
-
 renderPlist = _.template(`
   <% user.playlists.forEach(function(pl) { %>
     <li>
-      <div class="collapsible-header"><%= pl.title %></div>
-      <% pl.songs.forEach(function(s) { %>
-        <div data-track-src="<%= s.track_id %>" class="collapsible-body"><button class="play-playlist-song">&#9654;</button>
-          <%= s.artist %> - <%= s.title %>
-        </div>
-      <% }); %>
-      <div class="collapsible-body">
-        <button class="addasong">Add Song</button>
+      <div data-pl="<%= pl.id %>" class="collapsible-header" style="color: black;"">
+        <%= pl.title %>
+        <i data-target="editplmodal" class="material-icons modal-trigger right">mode_edit</i>
       </div>
+      <% if (pl.songs.length > 0) { %>
+        <% pl.songs.forEach(function(s) { %>
+          <div class="collapsible-body" data-track-src="https://api.soundcloud.com/tracks/<%= s.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c">
+            <button data-track-id="<%= s.track_id %>" class="play-playlist-song">&#9654;</button>
+            <%= s.artist %> - <%= s.title %>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="collapsible-body">No Songs Added Yet!</div>
+      <% } %>
     </li>
   <% }); %>
   <div class="collapsible-header">
-    <button>Create New Playlist</button>
+    <button id="add-new-pl">Create New Playlist</button>
   </div>
 `)
 
 renderAddPLSong = _.template(`
-  <div class="col m2 astp">
-    <button class="add-plsong">Search</button>
+  <div class="astp">
     <form id="search-song" class="search-song-form hidden">
       <input type="text" id="search-add-value">
     </form>
@@ -112,6 +114,7 @@ renderMainSongDiv = _.template(`
   $searchForm.on('submit', showTracks);
   $('#playboard').on('click', '.play-playlist-song', playSong);
   $('#playboard').on('click', '#add-new-pl', addNewPlist);
+  // $('#playboard').on('click', 'i', editPlaylist);
 
   loadPlaylists();
 });
@@ -196,37 +199,6 @@ function createRecommendation(recommendationTrackId) {
 
 }
 
-renderPlist = _.template(`
-  <% user.playlists.forEach(function(pl) { %>
-    <li>
-      <div class="collapsible-header" style="color: black;""><%= pl.title %></div>
-      <% if (pl.songs.length > 0) { %>
-        <% pl.songs.forEach(function(s) { %>
-          <div class="collapsible-body" data-track-src="https://api.soundcloud.com/tracks/<%= s.track_id %>/stream?client_id=f4ddb16cc5099de27575f7bcb846636c">
-            <button data-track-id="<%= s.track_id %>" class="play-playlist-song">&#9654;</button>
-            <%= s.artist %> - <%= s.title %>
-          </div>
-        <% }); %>
-      <% } else { %>
-        <div class="collapsible-body">No Songs Added Yet!</div>
-      <% } %>
-    </li>
-  <% }); %>
-  <div class="collapsible-header">
-    <button id="add-new-pl">Create New Playlist</button>
-  </div>
-`)
-
-renderAddPLSong = _.template(`
-  <div class="astp">
-    <form id="search-song" class="search-song-form hidden">
-      <input type="text" id="search-add-value">
-    </form>
-    <ul class="found-songs hidden">
-    </ul>
-  </div>
-`)
-
 function renderPlists(user) {
   $plylst = $(renderPlist({user: user}));
 
@@ -279,7 +251,31 @@ function addNewPlist() {
     });
 }
 
-function editPlist() {
+function editPlTit() {
+  // access with jquery the id, title and all song ids & titles
+
+  // use the above data to dynamically add
+
+
+  // after plugging in data, show the "div"
+  $('#pl-title').show();
+
+  $('#pl-title').on('blur', function() {
+    // make ajax call to update title
+    $.ajax({
+      method: "PUT",
+      url: '/playlists/' + "playlist id from somewhere" + "/updatetitle",
+      data: {
+        title: $('#pl-title').val()
+      }
+    }, function(data) {
+      // update dom inside of My Playlists
+    });
+  });
+
+  $('#close-pl-btn').on('click', function() {
+    $('#pl-title').show();
+  });
 
 }
 
@@ -305,9 +301,7 @@ function showTracks(evt) {
         });
       });
     });
-
 }
-
 
 function renderTracks(tracks) {
   // Render the HTML.
@@ -333,7 +327,7 @@ function showSongInfo(evt) {
   };
   console.log("here's your main song: ", songInfo)
   renderMainTrack(songInfo)
-
+  $('#modal1').closeModal();
   fetchRecommendations(trackId)
     .then(function(recommendations) {
       // render the recommendations to the screen
@@ -396,7 +390,6 @@ function renderPossibleRecs($insertion, tracks) {
  */
 
 
-
  var track;
  var volume = 1;
 
@@ -451,8 +444,6 @@ function secsToMin (seconds) {
     track.play();
   }
 })
-
-
 
 //toggle volume when muted or not
  $('#volume').on('click', function() {

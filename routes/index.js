@@ -18,6 +18,7 @@ indexrouter.get('/', mainController.index);
 indexrouter.get('/users/me', vursersController.showCurrentUser);
 indexrouter.get('/users/:id', vursersController.show);
 indexrouter.post('/playlists', vursersController.addPlaylist);
+// indexrouter.put('/playlists/:id', vursersController.editPlTitle);
 
 // songs path:
 indexrouter.get('/songs/:id', songsController.show);
