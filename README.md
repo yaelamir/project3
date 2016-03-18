@@ -20,6 +20,13 @@ Computer-generated recommendations attempt to take an objective approach to some
 
 Crowdsourced recommendations from people with relevant music knowledge will produce the most accurate suggestions.
 
+##Planning
+
+**Trello:** https://trello.com/b/voYgBoWQ/project-3-vurs
+
+**Pitch:**
+![Pitch](https://i.imgur.com/NkqtIpK.png)
+
 ##Roles
 **Myung Gochu-Nemsenah Kim**: Project Manager and Creative Director
 
@@ -44,20 +51,31 @@ Once logged in, users will be able to see their playlist (which is imported from
 Misc:
 ![Main Page Picture](https://i.imgur.com/UVoS93T.jpg)
 
-##Technologies
+##Languages, Technologies, and Frameworks
 
+**_Development:_**  
+• HTML  
+• CSS  
+• Materialize  
+• JavaScript  
+• jQuery  
+
+**_Technologies:_**  
 • Mongoose  
 • Express   
 • Node.js  
-• HTML  
-• CSS  
-• JavaScript  
-• jQuery  
-• SoundCloud API  
+• Mongo  
 • lo-dash  
 • Passport/OAuth  
 • dotenv  
-• Materialize  
+
+**_Deployment:_**  
+• Heroku
+
+**_3P API:_**  
+• SoundCloud API  
+
+**_Other:_**  
 • Trello  
 • Prezi  
 
@@ -65,12 +83,14 @@ Misc:
 
 1. Minimap/Path of Music Exploration
 2. See more recommendations
-3. Complete CSS
-4. User profiles
+3. Complete CSS/Animations
+4. View other user profiles
+5. Front-Page Feed/Trending
+6. Automatically generated queue playlists(w/ socket.io)
 
-###Links
+##Links
 
-**Heroku:** 
+**Heroku:** https://mysterious-garden-27618.herokuapp.com
 
 **GitHub:** https://github.com/yaelamir/vurs
 
