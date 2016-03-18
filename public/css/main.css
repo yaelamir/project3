@@ -47,6 +47,16 @@ a {
   font-weight: 200;
 }
 
+#pl * {
+  background-color: rgba(51, 51, 51, 0.7);
+  border: none;
+    border-bottom-width: 0px !important;
+  border-top-width: 0px !important;
+  border-left-width: 0px !important;
+  border-right-width: 0px !important;
+  color: white;
+}
+
 /*@keyframes selectedrecommendation {
    0%   {border-bottom: 1px solid red;}
     25%  {border-top: 1px solid red;}

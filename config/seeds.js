@@ -74,23 +74,6 @@ Vurser.remove({}, function(err) {
           })
         });
       });
-
-      //CREATE A PLAYLIST
-      // Playlist.create({title: "beatz."}, function(err, playlist) {
-      //   if (err) console.log(err);
-
-      //   console.log("database seeded with  a playlist: " + playlist.title);
-      // })
-
-      // //ADD SONG TO A PLAYLIST
-      // Playlist.find({title: "beatz."}, function(err, playlist) {
-      //   if (err) console.log(err);
-      //   console.log(playlist.songs);
-      //   console.log(thesong);
-      //   playlist[0].songs.push(thesong);
-      //   console.log("heres your playlist: " + playlist[0])
-      // })
-    // })
   });
 })
 
